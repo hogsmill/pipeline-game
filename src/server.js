@@ -1,3 +1,6 @@
+const path = require('path')
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') })
+
 const fs = require('fs')
 
 const ON_DEATH = require('death')({uncaughtException: true})
@@ -8,12 +11,6 @@ const port = prod ? process.env.VUE_APP_PORT : 3025
 const logFile = prod ? process.argv[4] : 'server.log'
 const gameCollection =  prod ? process.env.VUE_APP_COLLECTION : 'pipeline'
 const gamesCollection =  prod ? process.env.VUE_APP_GAME_COLLECTION : 'pipelineGames'
-
-const logStr = 'gameCollection ' + gameCollection +  ', gamesCollection ' +gamesCollection
-fs.appendFile(logFile, logStr, function (err) {
-  if (err) console.log('err')
-  process.exit()
-})
 
 ON_DEATH(function(signal, err) {
   let logStr = new Date()
