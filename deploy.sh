@@ -6,7 +6,7 @@ fi
 
 REPO="https://github.com/hogsmill/no-estimates.git"
 APPS=(
-  'pipeline-game,pipelineGames,pipeline,3007'
+  'pipeline-game,pipelineGames,pipeline,3025'
 )
 
 for ((i = 0; i < ${#APPS[@]}; i++))
