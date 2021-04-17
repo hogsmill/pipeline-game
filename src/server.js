@@ -9,8 +9,9 @@ const logFile = prod ? process.argv[4] : 'server.log'
 const gameCollection =  prod ? process.env.VUE_APP_COLLECTION : 'pipeline'
 const gamesCollection =  prod ? process.env.VUE_APP_GAME_COLLECTION : 'pipelineGames'
 
+const logStr = 'gameCollection ' + gameCollection +  ', gamesCollection ' +gamesCollection
 fs.appendFile(logFile, logStr, function (err) {
-  if (err) console.log('gameCollection', gameCollection, 'gamesCollection', gamesCollection)
+  if (err) console.log('err')
   process.exit()
 })
 
