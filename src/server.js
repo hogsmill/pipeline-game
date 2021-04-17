@@ -9,6 +9,11 @@ const logFile = prod ? process.argv[4] : 'server.log'
 const gameCollection =  prod ? process.env.VUE_APP_COLLECTION : 'pipeline'
 const gamesCollection =  prod ? process.env.VUE_APP_GAME_COLLECTION : 'pipelineGames'
 
+fs.appendFile(logFile, logStr, function (err) {
+  if (err) console.log('gameCollection', gameCollection, 'gamesCollection', gamesCollection)
+  process.exit()
+})
+
 ON_DEATH(function(signal, err) {
   let logStr = new Date()
   if (signal) {
