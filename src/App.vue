@@ -8,14 +8,8 @@
     <div v-if="localStorageStatus != 'ok'" class="not-connected">
       WARNING: {{ localStorageStatus }} - please enable cookies in browser settings
     </div>
-    <div v-if="currentTab == 'game'">
-      <h1>GAME</h1>
-      <h2>Message: ({{ source }}) :{{ message }}, {{ date }}</h2>
-      <button @click="send()">
-        Send
-      </button>
-    </div>
-    <h1 v-if="currentTab == 'facilitator'">FACILITATOR</h1>
+    <Game v-if="currentTab == 'game'" />
+    <Facilitator v-if="currentTab == 'facilitator'" />
   </div>
 </template>
 
@@ -27,12 +21,16 @@ import params from './lib/params.js'
 
 import Header from './components/Header.vue'
 import WalkThrough from './components/about/WalkThroughView.vue'
+import Game from './components/Game.vue'
+import Facilitator from './components/Facilitator.vue'
 
 export default {
   name: 'App',
   components: {
     Header,
-    WalkThrough
+    WalkThrough,
+    Game,
+    Facilitator
   },
   data() {
     return {
