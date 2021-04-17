@@ -8,7 +8,13 @@
     <div v-if="localStorageStatus != 'ok'" class="not-connected">
       WARNING: {{ localStorageStatus }} - please enable cookies in browser settings
     </div>
-    <h1 v-if="currentTab == 'game'">GAME</h1>
+    <div v-if="currentTab == 'game'">
+      <h1>GAME</h1>
+      <h2>Message: ({{ source }}) :{{ message }}, {{ date }}</h2>
+      <button @click="send()">
+        Send
+      </button>
+    </div>
     <h1 v-if="currentTab == 'facilitator'">FACILITATOR</h1>
   </div>
 </template>
