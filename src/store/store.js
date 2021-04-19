@@ -3,6 +3,18 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
+function features(state, status) {
+  const features = []
+  if (state.team.id) {
+    for (let i = 0; i < state.team.features.length; i++) {
+      if (state.team.features[i].status == status) {
+        features.push(state.team.features[i])
+      }
+    }
+  }
+  return features
+}
+
 export const store = new Vuex.Store({
   state: {
     thisGame: 'The Pipeline Game',
@@ -11,7 +23,15 @@ export const store = new Vuex.Store({
     localStorageStatus: true,
     walkThrough: false,
     currentTab: 'game',
-    host: false
+    host: false,
+    games: [],
+    teams: [],
+    gameId: null,
+    teamId: null,
+    game: {},
+    team: {},
+    editingGame: {},
+    editingTeams: []
   },
   getters: {
     thisGame: (state) => {
@@ -31,6 +51,45 @@ export const store = new Vuex.Store({
     },
     getLocalStorageStatus: (state) => {
       return state.localStorageStatus
+    },
+    getGames: (state) => {
+      return state.games
+    },
+    getGameId: (state) => {
+      return state.gameId
+    },
+    getGame: (state) => {
+      return state.game
+    },
+    getTeams: (state) => {
+      return state.teams
+    },
+    getTeamId: (state) => {
+      return state.teamId
+    },
+    getTeam: (state) => {
+      return state.team
+    },
+    getFeaturesToDevelop: (state) => {
+      return features(state, 'To Develop')
+    },
+    getFeaturesInTest: (state) => {
+      return features(state, 'In Test')
+    },
+    getFeaturesDelivered: (state) => {
+      return features(state, 'Delivered')
+    },
+    getFeatures: (state) => {
+      return state.team.features
+    },
+    getBugValues: (state) => {
+      return state.game.bugValues
+    },
+    getEditingGame: (state) => {
+      return state.editingGame
+    },
+    getEditingTeams: (state) => {
+      return state.editingTeams
     }
   },
   mutations: {
@@ -48,6 +107,30 @@ export const store = new Vuex.Store({
     },
     updateCurrentTab: (state, payload) => {
       state.currentTab = payload
+    },
+    updateGames: (state, payload) => {
+      state.games = payload
+    },
+    updateTeams: (state, payload) => {
+      state.teams = payload
+    },
+    updateGameId: (state, payload) => {
+      state.gameId = payload
+    },
+    updateTeamId: (state, payload) => {
+      state.teamId = payload
+    },
+    updateGame: (state, payload) => {
+      state.game = payload
+    },
+    updateTeam: (state, payload) => {
+      state.team = payload
+    },
+    updateFeatures: (state, payload) => {
+      state.features = payload
+    },
+    updateEditingTeams: (state, payload) => {
+      state.editingTeams = payload
     }
   },
   actions: {
@@ -65,6 +148,30 @@ export const store = new Vuex.Store({
     },
     updateCurrentTab: ({ commit }, payload) => {
       commit('updateCurrentTab', payload)
-    }
+    },
+    updateGames: ({ commit }, payload) => {
+      commit('updateGames', payload)
+    },
+    updateTeams: ({ commit }, payload) => {
+      commit('updateTeams', payload)
+    },
+    updateGameId: ({ commit }, payload) => {
+      commit('updateGameId', payload)
+    },
+    updateTeamId: ({ commit }, payload) => {
+      commit('updateTeamId', payload)
+    },
+    updateGame: ({ commit }, payload) => {
+      commit('updateGame', payload)
+    },
+    updateTeam: ({ commit }, payload) => {
+      commit('updateTeam', payload)
+    },
+    updateFeatures: ({ commit }, payload) => {
+      commit('updateFeatures', payload)
+    },
+    updateEditingTeams: ({ commit }, payload) => {
+      commit('updateEditingTeams', payload)
+    },
   }
 })

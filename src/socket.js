@@ -17,10 +17,39 @@ socket.on('updateConnections', (data) => { bus.$emit('updateConnections', data) 
 
 // Send
 
-bus.$on('sendTestMessage', (data) => { socket.emit('sendTestMessage', data) })
+bus.$on('sendCheckSystemGames', (data) => { socket.emit('sendCheckSystemGames', data) })
+
+bus.$on('sendRestartGame', (data) => { socket.emit('sendRestartGame', data) })
+
+bus.$on('sendGetTeams', (data) => { socket.emit('sendGetTeams', data) })
+
+bus.$on('sendLoadGame', (data) => { socket.emit('sendLoadGame', data) })
+
+bus.$on('sendTestFeature', (data) => { socket.emit('sendTestFeature', data) })
+
+bus.$on('sendFixBugsInFeature', (data) => { socket.emit('sendFixBugsInFeature', data) })
+
+bus.$on('sendDeliverFeature', (data) => { socket.emit('sendDeliverFeature', data) })
+
+// Facilitator
+
+bus.$on('sendLoadEditingTeams', (data) => { socket.emit('sendLoadEditingTeams', data) })
+
 
 // Receive
 
-socket.on('testMessage', (data) => { bus.$emit('testMessage', data) })
+socket.on('updateGames', (data) => { bus.$emit('updateGames', data) })
+
+socket.on('updateTeams', (data) => { bus.$emit('updateTeams', data) })
+
+socket.on('updateGame', (data) => { bus.$emit('updateGame', data) })
+
+socket.on('updateTeam', (data) => { bus.$emit('updateTeam', data) })
+
+socket.on('deliverFeature', (data) => { bus.$emit('deliverFeature', data) })
+
+// Facilitator
+
+socket.on('updateEditingTeams', (data) => { bus.$emit('updateEditingTeams', data) })
 
 export default bus

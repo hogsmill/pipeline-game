@@ -48,7 +48,13 @@ export default {
     },
     currentTab() {
       return this.$store.getters.getCurrentTab
-    }
+    },
+    gameId() {
+      return this.$store.getters.getGameId
+    },
+    teamId() {
+      return this.$store.getters.getTeamId
+    },
   },
   created() {
     if (params.isParam('host')) {
@@ -66,17 +72,32 @@ export default {
       this.$store.dispatch('updateConnections', data)
     })
 
-    bus.$on('testMessage', (data) => {
-      console.log(data)
-      this.source = data.source
-      this.date = data.date
-      this.message = data.message
+    bus.$emit('sendCheckSystemGames')
+
+    bus.$on('updateGames', (data) => {
+      this.$store.dispatch('updateGames', data)
     })
-  },
-  methods: {
-    send() {
-      bus.$emit('sendTestMessage', {source: 'App.vue', message: 'Hello World!'})
-    }
+
+    bus.$on('updateTeams', (data) => {
+      this.$store.dispatch('updateTeams', data)
+    })
+
+    bus.$on('updateGame', (data) => {
+      console.log(data)
+      if (data.game.id == this.gameId) {
+        this.$store.dispatch('updateGame', data.game)
+      }
+      if (data.team.gameId == this.gameId && data.team.id == this.teamId) {
+        this.$store.dispatch('updateTeam', data.team)
+      }
+    })
+
+    bus.$on('updateTeam', (data) => {
+      console.log(data)
+      if (data.gameId == this.gameId && data.id == this.teamId) {
+        this.$store.dispatch('updateTeam', data)
+      }
+    })
   }
 }
 </script>

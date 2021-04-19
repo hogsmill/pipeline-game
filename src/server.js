@@ -74,13 +74,6 @@ function emit(event, data) {
   io.emit(event, data)
 }
 
-function emit(event, data) {
-  if (debugOn) {
-    console.log(event, data, '(emit)')
-  }
-  io.emit(event, data)
-}
-
 MongoClient.connect(url, { useUnifiedTopology: true, maxIdleTimeMS: maxIdleTime }, function (err, client) {
   if (err) throw err
   const db = client.db('db')
@@ -109,7 +102,26 @@ MongoClient.connect(url, { useUnifiedTopology: true, maxIdleTimeMS: maxIdleTime 
       emit('updateConnections', {connections: connections, maxConnections: maxConnections})
     })
 
-    socket.on('sendTestMessage', (data) => { dbStore.testMessage(db, io, data, debugOn) })
+    socket.on('sendCheckSystemGames', (data) => { dbStore.checkSystemGames(db, io, debugOn) })
+
+    socket.on('sendRestartGame', (data) => { dbStore.restartGame(db, io, data, debugOn) })
+
+    socket.on('sendGetGames', (data) => { dbStore.getGames(db, io, debugOn) })
+
+    socket.on('sendGetTeams', (data) => { dbStore.getTeams(db, io, data, debugOn) })
+
+    socket.on('sendLoadGame', (data) => { dbStore.loadGame(db, io, data, debugOn) })
+
+    socket.on('sendTestFeature', (data) => { data.direction = 'right'; dbStore.moveFeature(db, io, data, debugOn) })
+
+    socket.on('sendFixBugsInFeature', (data) => { data.direction = 'left'; dbStore.moveFeature(db, io, data, debugOn) })
+
+    socket.on('sendDeliverFeature', (data) => { data.direction = 'right'; dbStore.moveFeature(db, io, data, debugOn) })
+
+    // Facilitator
+
+    socket.on('sendLoadEditingTeams', (data) => { dbStore.loadEditingTeams(db, io, data, debugOn) })
+
   })
 })
 
