@@ -12,6 +12,8 @@ function loadGames(db, io) {
 
 function resetTeam(team) {
   team.features = featureFuns.features()
+  team.day = 1
+  team.inTest = false
 
   return team
 }
@@ -44,7 +46,8 @@ module.exports = {
               id: uuidv4(),
               name: teams[i],
               protected: true,
-              features: featureFuns.features()
+              features: featureFuns.features(),
+              day: 1
             }
             db.gameCollection.insertOne(team, function(err, res) {
               if (err) throw err
@@ -98,6 +101,72 @@ module.exports = {
     })
   },
 
+  selectFeatureToDevelop: function(db, io, data, debugOn) {
+
+    if (debugOn) { console.log('selectFeatureToDevelop', data) }
+
+    db.gameCollection.findOne({gameId: data.gameId, id: data.teamId}, function(err, res) {
+      if (err) throw err
+      const features = []
+      for (let i = 0; i < res.features.length; i++) {
+        const feature = res.features[i]
+        if (feature.id == data.featureId) {
+          feature.selected = data.selected
+        }
+        features.push(feature)
+      }
+      res.features = features
+      const id = res._id
+      delete res._id
+      db.gameCollection.updateOne({'_id': id}, {$set: res}, function(err, ) {
+        io.emit('updateTeam', res)
+      })
+    })
+  },
+
+  sendFeaturesToTest: function(db, io, data, debugOn) {
+
+    if (debugOn) { console.log('sendFeaturesToTest', data) }
+
+    db.gameCollection.findOne({gameId: data.gameId, id: data.teamId}, function(err, res) {
+      if (err) throw err
+      const features = []
+      for (let i = 0; i < res.features.length; i++) {
+        const feature = res.features[i]
+        for (let j = 0; j < data.featureIds.length; j++) {
+          if (feature.id == data.featureIds[j]) {
+            feature.status = 'In Test'
+            feature.selected = false
+          }
+        }
+        features.push(feature)
+      }
+      res.features = features
+      res.inTest = true
+      const id = res._id
+      delete res._id
+      db.gameCollection.updateOne({'_id': id}, {$set: res}, function(err, ) {
+        io.emit('updateTeam', res)
+      })
+    })
+  },
+
+  nextSprint: function(db, io, data, debugOn) {
+
+    if (debugOn) { console.log('nextSprint', data) }
+
+    db.gameCollection.findOne({gameId: data.gameId, id: data.teamId}, function(err, res) {
+      if (err) throw err
+      res.day = res.day + 1
+      res.inTest = false
+      const id = res._id
+      delete res._id
+      db.gameCollection.updateOne({'_id': id}, {$set: res}, function(err, ) {
+        io.emit('updateTeam', res)
+      })
+    })
+  },
+
   moveFeature: function(db, io, data, debugOn) {
 
     if (debugOn) { console.log('moveFeature', data) }
@@ -108,7 +177,19 @@ module.exports = {
       for (let i = 0; i < res.features.length; i++) {
         let feature = res.features[i]
         if (feature.id == data.featureId) {
-          feature = featureFuns.move(feature, data.direction)
+          feature.status = data.status
+          switch (data.status) {
+            case 'In Test':
+              break
+            case 'Fixing Bugs':
+              feature = featureFuns.fixBugs(feature)
+              break
+            case 'Delivered':
+              feature = featureFuns.deliver(feature)
+              break
+            default:
+              console.log('Unknown status ', data.status)
+          }
         }
         features.push(feature)
       }

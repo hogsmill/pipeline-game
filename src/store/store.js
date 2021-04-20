@@ -3,12 +3,14 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
-function features(state, status) {
+function features(state, statuses) {
   const features = []
   if (state.team.id) {
     for (let i = 0; i < state.team.features.length; i++) {
-      if (state.team.features[i].status == status) {
-        features.push(state.team.features[i])
+      for (let j = 0; j < statuses.length; j++) {
+        if (state.team.features[i].status == statuses[j]) {
+          features.push(state.team.features[i])
+        }
       }
     }
   }
@@ -30,6 +32,8 @@ export const store = new Vuex.Store({
     teamId: null,
     game: {},
     team: {},
+    selectedFeatures: [],
+    selectedEffort: 0,
     editingGame: {},
     editingTeams: []
   },
@@ -71,13 +75,35 @@ export const store = new Vuex.Store({
       return state.team
     },
     getFeaturesToDevelop: (state) => {
-      return features(state, 'To Develop')
+      return features(state, ['To Develop', 'Fixing Bugs'])
     },
     getFeaturesInTest: (state) => {
-      return features(state, 'In Test')
+      return features(state, ['In Test'])
     },
     getFeaturesDelivered: (state) => {
-      return features(state, 'Delivered')
+      return features(state, ['Delivered'])
+    },
+    getSelectedFeatures: (state) => {
+      if (state.team.id) {
+        const features = []
+        for (let i = 0; i < state.team.features.length; i++) {
+          if (state.team.features[i].status == 'To Develop' && state.team.features[i].selected) {
+            features.push(state.team.features[i])
+          }
+        }
+        return state.selectedFeatures = features
+      }
+    },
+    getSelectedEffort: (state) => {
+      if (state.team.id) {
+        let effort = 0
+        for (let i = 0; i < state.team.features.length; i++) {
+          if (state.team.features[i].status == 'To Develop' && state.team.features[i].selected) {
+            effort = effort + state.team.features[i].effort
+          }
+        }
+        return state.selectedEffort = effort
+      }
     },
     getFeatures: (state) => {
       return state.team.features

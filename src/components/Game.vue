@@ -2,6 +2,11 @@
   <div class="container">
     <SetGame />
     <i v-if="isHost && gameId" title="Restart Game" class="fas fa-undo-alt restart" aria-hidden="true" @click="restart()" />
+    <h1>
+      <span v-if="game.id">{{ game.name }},</span>
+      <span v-if="team.id">Team: {{ team.name }},</span>
+      <span v-if="team.id">Day: {{ team.day }}</span>
+    </h1>
     <div class="row">
       <div class="col-8">
         <DevTeam />
@@ -32,6 +37,12 @@ export default {
     },
     gameId() {
       return this.$store.getters.getGameId
+    },
+    game() {
+      return this.$store.getters.getGame
+    },
+    team() {
+      return this.$store.getters.getTeam
     }
   },
   methods: {
@@ -45,6 +56,12 @@ export default {
 </script>
 
 <style lang="scss">
+  h1 {
+    span {
+      margin: 6px;
+    }
+  }
+
   .row {
     .col-4, .col-8 {
       border: 1px solid;

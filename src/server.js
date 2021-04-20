@@ -112,11 +112,15 @@ MongoClient.connect(url, { useUnifiedTopology: true, maxIdleTimeMS: maxIdleTime 
 
     socket.on('sendLoadGame', (data) => { dbStore.loadGame(db, io, data, debugOn) })
 
-    socket.on('sendTestFeature', (data) => { data.direction = 'right'; dbStore.moveFeature(db, io, data, debugOn) })
+    socket.on('sendSelectFeatureToDevelop', (data) => { dbStore.selectFeatureToDevelop(db, io, data, debugOn) })
 
-    socket.on('sendFixBugsInFeature', (data) => { data.direction = 'left'; dbStore.moveFeature(db, io, data, debugOn) })
+    socket.on('sendFeaturesToTest', (data) => { data.status = 'In Test'; dbStore.sendFeaturesToTest(db, io, data, debugOn) })
 
-    socket.on('sendDeliverFeature', (data) => { data.direction = 'right'; dbStore.moveFeature(db, io, data, debugOn) })
+    socket.on('sendFixBugsInFeature', (data) => { data.status = 'Fixing Bugs';  dbStore.moveFeature(db, io, data, debugOn) })
+
+    socket.on('sendDeliverFeature', (data) => { data.status = 'Delivered'; dbStore.moveFeature(db, io, data, debugOn) })
+    
+    socket.on('sendNextSprint', (data) => { dbStore.nextSprint(db, io, data, debugOn) })
 
     // Facilitator
 

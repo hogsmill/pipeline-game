@@ -84,13 +84,22 @@ export default {
       const gameId = document.getElementById('game-name-select').value
       bus.$emit('sendGetTeams', {gameId: gameId})
     },
+    notSelected() {
+      const gameId = document.getElementById('game-name-select').value
+      const teamId = document.getElementById('team-name-select').value
+      return
+    },
     loadGame() {
       const gameId = document.getElementById('game-name-select').value
       const teamId = document.getElementById('team-name-select').value
-      this.$store.dispatch('updateGameId', gameId)
-      this.$store.dispatch('updateTeamId', teamId)
-      bus.$emit('sendLoadGame', {gameId: gameId, teamId: teamId})
-      this.hide()
+      if (!gameId || !teamId) {
+        alert('Please select a game and team')
+      } else {
+        this.$store.dispatch('updateGameId', gameId)
+        this.$store.dispatch('updateTeamId', teamId)
+        bus.$emit('sendLoadGame', {gameId: gameId, teamId: teamId})
+        this.hide()
+      }
     }
   }
 }

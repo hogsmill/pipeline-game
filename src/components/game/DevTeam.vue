@@ -1,25 +1,45 @@
 <template>
-  <div class="dev-team">
-    <h1>
+  <div v-if="team.id" class="dev-team">
+    <h2>
       Dev Team
-    </h1>
+    </h2>
+    <p>
+      Bug Values: TBD
+    </p>
     <div class="row">
-      <div class="col-4">
+      <div class="col">
         <h6>
-          Send To Test
+          To Do
         </h6>
-        <div v-for="(feature, index) in devFeatures" :key="index" class="feature">
+        <div>
+          <div>Effort: {{ selectedEffort }} / {{ maxEffort }}</div>
           <div>
-            {{ feature.name }}
-          </div>
-          <div class="buttons">
-            <button class="btn btn-sm btn-info" @click="testFeature(feature)">
-              Test
+            <button v-if="!team.inTest" class="btn btn-sm btn-info" @click="sendFeaturesToTest()">
+              Submit to Test
+            </button>
+            <button v-if="team.inTest" class="btn btn-sm btn-info" @click="nextSprint()">
+              Next Sprint
             </button>
           </div>
         </div>
+        <div v-for="(feature, index) in devFeatures" :key="index" class="feature">
+          <div class="right">
+            Effort: {{ feature.effort }}
+            <i v-if="feature.status == 'To Develop'" class="fas fa-snowplow right" />
+            <i v-if="feature.status == 'Fixing Bugs'" class="fas fa-bug right" />
+          </div>
+          <div>
+            {{ feature.name }} <br>
+            <span v-if="feature.fixingBugs">
+              <i class="fas fa-bug" title="Fixing Bugs" />
+            </span>
+          </div>
+          <div>
+            <input type="checkbox" :id="'feature-select-' + feature.id" :checked="feature.selected" :disabled="team.inTest" @click="toggleSelectFeature(feature)">
+          </div>
+        </div>
       </div>
-      <div class="col-4">
+      <div class="col">
         <h6>
           In Test
         </h6>
@@ -28,12 +48,12 @@
             {{ feature.name }}
           </div>
           <div>
-            <div v-for="(bug, bindex) in feature.bugs" :key="bindex" class="bug" :class="bug.severity">
-              {{ bug.name }}
+            <div v-for="(bug, bindex) in feature.bugs" :key="bindex" class="bug" :class="{'fixed': bug.fixed}">
+              <i class="fas fa-bug" :class="bug.severity" :title="bug.severity + ': ' + bug.name" />
             </div>
           </div>
           <div class="buttons">
-            <button class="btn btn-sm btn-info" @click="fixBugsInFeature(feature)">
+            <button v-if="feature.bugs.length" class="btn btn-sm btn-info" @click="fixBugsInFeature(feature)">
               Fix Bugs
             </button>
             <button class="btn btn-sm btn-info" @click="deliverFeature(feature)">
@@ -50,6 +70,11 @@
 import bus from '../../socket.js'
 
 export default {
+  data() {
+    return {
+      maxEffort: 30
+    }
+  },
   computed: {
     game() {
       return this.$store.getters.getGame
@@ -60,11 +85,38 @@ export default {
     devFeatures() {
       return this.$store.getters.getFeaturesToDevelop
     },
+    selectedFeatures() {
+      return this.$store.getters.getSelectedFeatures
+    },
+    selectedEffort() {
+      return this.$store.getters.getSelectedEffort
+    },
     testFeatures() {
       return this.$store.getters.getFeaturesInTest
     }
   },
   methods: {
+    featureIsSelected(feature) {
+      return !!this.selectedFeatures.find(function(f) {
+        return f.id == feature.id
+      })
+    },
+    toggleSelectFeature(feature) {
+      const selected = document.getElementById('feature-select-' + feature.id).checked
+      if (selected  && this.selectedEffort + feature.effort > this.maxEffort) {
+        alert('You cannot select more than 30 units of effort')
+        document.getElementById('feature-select-' + feature.id).checked = false
+      } else {
+        bus.$emit('sendSelectFeatureToDevelop', {gameId: this.game.id, teamId: this.team.id, featureId: feature.id, selected: selected})
+      }
+    },
+    sendFeaturesToTest() {
+      const featureIds = []
+      for (let i = 0; i < this.selectedFeatures.length; i++) {
+        featureIds.push(this.selectedFeatures[i].id)
+      }
+      bus.$emit('sendFeaturesToTest', {gameId: this.game.id, teamId: this.team.id, featureIds: featureIds})
+    },
     testFeature(feature) {
       bus.$emit('sendTestFeature', {gameId: this.game.id, teamId: this.team.id, featureId: feature.id})
     },
@@ -73,6 +125,9 @@ export default {
     },
     deliverFeature(feature) {
       bus.$emit('sendDeliverFeature', {gameId: this.game.id, teamId: this.team.id, featureId: feature.id})
+    },
+    nextSprint() {
+      bus.$emit('sendNextSprint', {gameId: this.game.id, teamId: this.team.id})
     }
   }
 }
@@ -84,19 +139,36 @@ export default {
     .feature {
       margin: 6px;
       border: 1px solid;
+      width: 120px;
+      display: inline-block;
+
+      .right {
+        text-align: right;
+        margin: 2px;
+        color: #888;
+      }
 
       .bug {
-        &.critical {
-          background-color: red;
+        display: inline-block;
+        padding: 2px;
+        margin: 2px;
+
+        &.fixed {
+          background-color: green;
+          color: #fff;
         }
-        &.major {
-          background-color: orange;
+
+        .critical {
+          color: red;
         }
-        &.minor {
-          background-color: yellow;
+        .major {
+          color: darkorange;
         }
-        &.cosmetic {
-          background-color: lightgrey;
+        .minor {
+          color: darkseagreen;
+        }
+        .cosmetic {
+          color: lightgrey;
         }
       }
 

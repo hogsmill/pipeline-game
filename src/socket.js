@@ -25,11 +25,15 @@ bus.$on('sendGetTeams', (data) => { socket.emit('sendGetTeams', data) })
 
 bus.$on('sendLoadGame', (data) => { socket.emit('sendLoadGame', data) })
 
-bus.$on('sendTestFeature', (data) => { socket.emit('sendTestFeature', data) })
+bus.$on('sendSelectFeatureToDevelop', (data) => { socket.emit('sendSelectFeatureToDevelop', data) })
+
+bus.$on('sendFeaturesToTest', (data) => { socket.emit('sendFeaturesToTest', data) })
 
 bus.$on('sendFixBugsInFeature', (data) => { socket.emit('sendFixBugsInFeature', data) })
 
 bus.$on('sendDeliverFeature', (data) => { socket.emit('sendDeliverFeature', data) })
+
+bus.$on('sendNextSprint', (data) => { socket.emit('sendNextSprint', data) })
 
 // Facilitator
 
