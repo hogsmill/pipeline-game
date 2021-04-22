@@ -63,6 +63,14 @@ export default {
 
     this.$store.dispatch('localStorageStatus', ls.check())
 
+    const gameId = localStorage.getItem('pg-gameId')
+    const teamId = localStorage.getItem('pg-teamId')
+    if (gameId && teamId) {
+      this.$store.dispatch('updateGameId', gameId)
+      this.$store.dispatch('updateTeamId', teamId)
+      bus.$emit('sendLoadGame', {gameId: gameId, teamId: teamId})
+    }
+
     bus.$on('connectionError', (data) => {
       this.$store.dispatch('updateConnectionError', data)
     })

@@ -3,10 +3,23 @@ const { v4: uuidv4 } = require('uuid')
 
 const featureFuns = require('./lib/features.js')
 
+const days = 10
+
 function loadGames(db, io) {
   db.gamesCollection.find().toArray(function(err, res) {
     if (err) throw err
     io.emit('updateGames', res)
+  })
+}
+
+function loadGame(db, io, data) {
+
+  db.gamesCollection.findOne({id: data.gameId}, function(err, gameRes) {
+    if (err) throw err
+    db.gameCollection.findOne({gameId: data.gameId, id: data.teamId}, function(err, res) {
+      if (err) throw err
+      io.emit('updateGame', {game: gameRes, team: res})
+    })
   })
 }
 
@@ -36,7 +49,9 @@ module.exports = {
           id: demoId,
           name: 'Demo',
           protected: true,
-          bugValues: featureFuns.bugValues()
+          days: days,
+          bugValues: featureFuns.bugValues(),
+          days: 10
         }
         db.gamesCollection.insertOne(game, function(err, res) {
           if (err) throw err
@@ -65,16 +80,23 @@ module.exports = {
 
     if (debugOn) { console.log('restartGame', data) }
 
-    db.gameCollection.find({gameId: data.gameId}).toArray(function(err, res) {
+    db.gamesCollection.updateOne({id: data.gameId}, {$set: {days: days}}, function(err, ) {
       if (err) throw err
-      for (let i = 0; i < res.length; i++) {
-        const team = resetTeam(res[i])
-        const id = team._id
-        delete team._id
-        db.gameCollection.updateOne({'_id': id}, {$set: team}, function(err, ) {
-          io.emit('updateTeam', team)
-        })
-      }
+      db.gameCollection.find({gameId: data.gameId}).toArray(function(err, res) {
+        if (err) throw err
+        for (let i = 0; i < res.length; i++) {
+          const team = resetTeam(res[i])
+          const id = team._id
+          delete team._id
+          db.gameCollection.updateOne({'_id': id}, {$set: team}, function(err, ) {
+            const teamData = {
+              gameId: data.gameId,
+              teamId: team.id
+            }
+            loadGame(db, io, teamData)
+          })
+        }
+      })
     })
   },
 
@@ -92,13 +114,7 @@ module.exports = {
 
     if (debugOn) { console.log('loadGame', data) }
 
-    db.gamesCollection.findOne({id: data.gameId}, function(err, gameRes) {
-      if (err) throw err
-      db.gameCollection.findOne({gameId: data.gameId, id: data.teamId}, function(err, res) {
-        if (err) throw err
-        io.emit('updateGame', {game: gameRes, team: res})
-      })
-    })
+    loadGame(db, io, data)
   },
 
   selectFeatureToDevelop: function(db, io, data, debugOn) {
@@ -135,6 +151,9 @@ module.exports = {
         const feature = res.features[i]
         for (let j = 0; j < data.featureIds.length; j++) {
           if (feature.id == data.featureIds[j]) {
+            if (feature.status == 'Fixing Bugs') {
+              feature.bugs = featureFuns.fixBugs(feature.bugs)
+            }
             feature.status = 'In Test'
             feature.selected = false
           }
@@ -182,10 +201,11 @@ module.exports = {
             case 'In Test':
               break
             case 'Fixing Bugs':
-              feature = featureFuns.fixBugs(feature)
+              feature.effort = 0
+              feature.bugEffort = featureFuns.bugEffort(feature.bugs)
               break
             case 'Delivered':
-              feature = featureFuns.deliver(feature)
+              feature.bugs = featureFuns.deliver(feature.bugs)
               break
             default:
               console.log('Unknown status ', data.status)

@@ -98,6 +98,7 @@ function generateFeature(config, n) {
     name: generateName(n),
     description: generateDescription(n),
     effort: listFuns.selectRandomElement(config.efforts),
+    bugEffort: 0,
     bugs: generateBugs(),
     status: statuses[0],
     customer: generateCustomer()
@@ -130,10 +131,21 @@ module.exports = {
     return bugValues
   },
 
-  fixBugs: function(feature) {
+  bugEffort: function(bugs) {
+    let effort = 0
+    for (i = 0; i < bugs.length; i++) {
+      if (!bugs[i].fixed) {
+        effort = effort + 10
+      }
+    }
+    return effort
+  },
+
+  fixBugs: function(featureBugs) {
     const bugs = []
-    for (let i = 0; i < feature.bugs.length; i++) {
-      const bug = feature.bugs[i]
+    let i = 0
+    for (i = 0; i < featureBugs.length; i++) {
+      const bug = featureBugs[i]
       if (!bug.fixed) {
         if (Math.random() > 0.5) {
           bug.fixed = true
@@ -141,23 +153,24 @@ module.exports = {
       }
       bugs.push(bug)
     }
-    feature.bugs = bugs
-    return feature
+    return bugs
   },
 
-  deliver: function(feature) {
+  deliver: function(featureBugs) {
     const bugs = []
-    for (let i = 0; i < feature.bugs.length; i++) {
-      const bug = feature.bugs[i]
+    for (let i = 0; i < featureBugs.length; i++) {
+      const bug = featureBugs[i]
       if (!bug.fixed) {
         if (Math.random() > 0.5) {
           bug.seen = true
+        } else {
+          bug.seen = false
         }
       }
+      console.log(bug.seen)
       bugs.push(bug)
     }
-    feature.bugs = bugs
-    return feature
+    return bugs
   }
 
 }

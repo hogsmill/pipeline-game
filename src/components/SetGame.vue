@@ -75,6 +75,9 @@ export default {
   methods: {
     show() {
       bus.$emit('sendGetGames')
+      if (this.game.id) {
+        bus.$emit('sendGetTeams', {gameId: this.game.id})
+      }
       this.$modal.show('set-up')
     },
     hide() {
@@ -97,6 +100,8 @@ export default {
       } else {
         this.$store.dispatch('updateGameId', gameId)
         this.$store.dispatch('updateTeamId', teamId)
+        localStorage.setItem('pg-gameId', gameId)
+        localStorage.setItem('pg-teamId', teamId)
         bus.$emit('sendLoadGame', {gameId: gameId, teamId: teamId})
         this.hide()
       }

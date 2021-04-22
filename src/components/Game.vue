@@ -5,7 +5,7 @@
     <h1>
       <span v-if="game.id">{{ game.name }},</span>
       <span v-if="team.id">Team: {{ team.name }},</span>
-      <span v-if="team.id">Day: {{ team.day }}</span>
+      <span v-if="team.id">Day: {{ team.day }}/{{ game.days }}</span>
     </h1>
     <div class="row">
       <div class="col-8">

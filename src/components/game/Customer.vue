@@ -4,11 +4,10 @@
       Customer
     </h2>
     <h3>
-      Score: {{ featuresScore() - dayScore() - bugsScore() }}
+      Score: {{ featuresScore() - bugsScore() }}
     </h3>
     <div>
       <i class="fas fa-check-circle features-score" title="↑ for features" /> {{ featuresScore() }},
-      <i class="far fa-calendar-alt" title="5 ↓ per day" /> -{{ dayScore() }},
       <i class="fas fa-bug bugs-score" title="↓ for bugs" /> -{{ bugsScore() }}
       (<i class="fas fa-bug bugs-not-seen-score" title="bugs not seen" /> <i>{{ bugsNotSeenScore() }}</i>)
     </div>
@@ -41,9 +40,6 @@ export default {
     }
   },
   methods: {
-    dayScore() {
-      return (this.team.day - 1) * 5
-    },
     featuresScore() {
       let score = 0
       for (let i = 0; i < this.features.length; i++) {

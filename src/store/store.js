@@ -17,6 +17,10 @@ function features(state, statuses) {
   return features
 }
 
+function inDevelop(feature) {
+  return feature.status = 'To Develop' || feature.status == 'Fixing Bugs'
+}
+
 export const store = new Vuex.Store({
   state: {
     thisGame: 'The Pipeline Game',
@@ -87,7 +91,7 @@ export const store = new Vuex.Store({
       if (state.team.id) {
         const features = []
         for (let i = 0; i < state.team.features.length; i++) {
-          if (state.team.features[i].status == 'To Develop' && state.team.features[i].selected) {
+          if (inDevelop(state.team.features[i]) && state.team.features[i].selected) {
             features.push(state.team.features[i])
           }
         }
