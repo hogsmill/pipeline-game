@@ -8,6 +8,7 @@
     <div v-if="localStorageStatus != 'ok'" class="not-connected">
       WARNING: {{ localStorageStatus }} - please enable cookies in browser settings
     </div>
+    <Alert />
     <Game v-if="currentTab == 'game'" />
     <Facilitator v-if="currentTab == 'facilitator'" />
   </div>
@@ -21,6 +22,7 @@ import params from './lib/params.js'
 
 import Header from './components/Header.vue'
 import WalkThrough from './components/about/WalkThroughView.vue'
+import Alert from './components/Alert.vue'
 import Game from './components/Game.vue'
 import Facilitator from './components/Facilitator.vue'
 
@@ -29,6 +31,7 @@ export default {
   components: {
     Header,
     WalkThrough,
+    Alert,
     Game,
     Facilitator
   },
@@ -54,7 +57,7 @@ export default {
     },
     teamId() {
       return this.$store.getters.getTeamId
-    },
+    }
   },
   created() {
     if (params.isParam('host')) {
@@ -92,11 +95,11 @@ export default {
 
     bus.$on('updateGame', (data) => {
       console.log(data)
-      if (data.game.id == this.gameId) {
+      if (data.game.id && data.game.id == this.gameId) {
         this.$store.dispatch('updateGame', data.game)
-      }
-      if (data.team.gameId == this.gameId && data.team.id == this.teamId) {
-        this.$store.dispatch('updateTeam', data.team)
+        if (data.team && data.team.gameId == this.gameId && data.team.id == this.teamId) {
+          this.$store.dispatch('updateTeam', data.team)
+        }
       }
     })
 

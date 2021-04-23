@@ -17,6 +17,8 @@ socket.on('updateConnections', (data) => { bus.$emit('updateConnections', data) 
 
 // Send
 
+bus.$on('sendAlert', (data) => { socket.emit('sendAlert', data) })
+
 bus.$on('sendCheckSystemGames', (data) => { socket.emit('sendCheckSystemGames', data) })
 
 bus.$on('sendRestartGame', (data) => { socket.emit('sendRestartGame', data) })
@@ -41,6 +43,8 @@ bus.$on('sendLoadEditingTeams', (data) => { socket.emit('sendLoadEditingTeams', 
 
 
 // Receive
+
+socket.on('alert', (data) => { bus.$emit('alert', data) })
 
 socket.on('updateGames', (data) => { bus.$emit('updateGames', data) })
 

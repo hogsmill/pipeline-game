@@ -1,13 +1,4 @@
-
-const bugValues = {
-  'critical': 50,
-  'major': 25,
-  'minor': 5,
-  'cosmetic': 1
-}
-
-const statuses = ['To Develop', 'In Test', 'Delivered']
-
+/*
 const features = [
   {
     id: '111',
@@ -46,27 +37,13 @@ const features = [
     status: statuses[0]
   }
 ]
-
+*/
 // =======================================================
 
 const { v4: uuidv4 } = require('uuid')
 
+const config = require('./config.js').config
 const listFuns = require('./lists.js')
-
-const config = {
-  noOfFeatures: 10,
-  statuses: ['To Develop', 'Bug Fixing', 'In Test', 'Delivered'],
-  efforts: [10, 20, 30],
-  maxNoOfBugs: 3,
-  bugEffort: 10,
-  bugValues: {
-    'critical': 50,
-    'major': 25,
-    'minor': 5,
-    'cosmetic': 1
-  },
-  customerValues: [0, 20, 50, 100]
-}
 
 function generateName(n) {
   return 'Feature ' + parseInt(n + 1)
@@ -78,10 +55,10 @@ function generateDescription(n) {
 
 function generateBugs() {
   const bugs = []
-  const noOfBugs = parseInt(Math.random() * config.maxNoOfBugs)
+  const noOfBugs = parseInt(Math.random() * config.bugs.maxNoOfBugs)
   for (let i = 0; i < noOfBugs; i++) {
     const bug = {
-      severity: listFuns.selectRandomElement(Object.keys(config.bugValues))
+      severity: listFuns.selectRandomElement(Object.keys(config.bugs.bugValues))
     }
     bugs.push(bug)
   }
@@ -89,23 +66,23 @@ function generateBugs() {
 }
 
 function generateCustomer() {
-  return listFuns.selectRandomElement(config.customerValues)
+  return listFuns.selectRandomElement(config.customer.customerValues)
 }
 
-function generateFeature(config, n) {
+function generateFeature(n) {
   return {
     id: uuidv4(),
     name: generateName(n),
     description: generateDescription(n),
-    effort: listFuns.selectRandomElement(config.efforts),
+    effort: listFuns.selectRandomElement(config.features.efforts),
     bugEffort: 0,
     bugs: generateBugs(),
-    status: statuses[0],
+    status: config.features.statuses[0],
     customer: generateCustomer()
   }
 }
 
-function generate(config) {
+function generate() {
 
   // Include:
   // - feature overides anohter  feature
@@ -115,8 +92,8 @@ function generate(config) {
   // ...so we select (say 3) features to develop based on effort
   //
   const features = []
-  for (let i = 0; i < config.noOfFeatures; i++) {
-    features.push(generateFeature(config, i))
+  for (let i = 0; i < config.features.noOfFeatures; i++) {
+    features.push(generateFeature(i))
   }
   return features
 }
@@ -124,16 +101,16 @@ function generate(config) {
 module.exports = {
 
   features: function() {
-    return generate(config)
+    return generate()
   },
 
   bugValues: function() {
-    return bugValues
+    return config.bugs.bugValues
   },
 
   bugEffort: function(bugs) {
     let effort = 0
-    for (i = 0; i < bugs.length; i++) {
+    for (let i = 0; i < bugs.length; i++) {
       if (!bugs[i].fixed) {
         effort = effort + 10
       }

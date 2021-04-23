@@ -4,7 +4,10 @@
       Dev Team
     </h2>
     <p>
-      Bug Values: TBD
+      Bug Values:
+      <span v-for="(severity, i) in Object.keys(bugValues)" :key="i" class="bug-value" :class="severity">
+        {{ severity }}: {{ bugValues[severity] }}
+      </span>
     </p>
     <div class="row">
       <div class="col">
@@ -18,7 +21,7 @@
               Submit to Test
             </button>
             <button v-if="team.inTest" class="btn btn-sm btn-info" @click="nextSprint()">
-              Next Sprint
+              Next {{ game.sprintLabel }}
             </button>
           </div>
         </div>
@@ -112,6 +115,9 @@ export default {
       if (feature.selected) {
         c = c + ' selected'
       }
+      if (this.team.inTest) {
+        c = c + ' status-in-test'
+      }
       return c
     },
     featureIsSelected(feature) {
@@ -134,7 +140,8 @@ export default {
     toggleSelectFeature(feature) {
       const selected = document.getElementById('feature-select-' + feature.id).checked
       if (selected  && this.selectedEffort + this.effort(feature) > this.maxEffort) {
-        alert('You cannot select more than 30 units of effort')
+        const message = 'You cannot select more than 30 units of effort. You need to send the selected items to test'
+        bus.$emit('sendAlert', {gameId: this.game.id, teamId: this.team.id, severity: 'error', message: message})
         document.getElementById('feature-select-' + feature.id).checked = false
       } else {
         bus.$emit('sendSelectFeatureToDevelop', {gameId: this.game.id, teamId: this.team.id, featureId: feature.id, selected: selected})
@@ -157,14 +164,45 @@ export default {
       bus.$emit('sendDeliverFeature', {gameId: this.game.id, teamId: this.team.id, featureId: feature.id})
     },
     nextSprint() {
-      bus.$emit('sendNextSprint', {gameId: this.game.id, teamId: this.team.id})
+      if (this.testFeatures.length) {
+        const message = 'You still have items in test. Deliver them or return them to dev to fix bugs'
+        bus.$emit('sendAlert', {gameId: this.game.id, teamId: this.team.id, severity: 'warning', message: message})
+      } else {
+        bus.$emit('sendNextSprint', {gameId: this.game.id, teamId: this.team.id})
+      }
     }
   }
 }
 </script>
 
 <style lang="scss">
+
+  $critical: red;
+  $major: orange;
+  $minor: darkseagreen;
+  $cosmetic: lightgrey;
+
   .dev-team {
+
+    .bug-value {
+      color: #fff;
+      padding: 2px;
+      margin: 0 2px;
+
+      &.critical {
+        background-color: $critical;
+      }
+      &.major {
+        background-color: $major;
+      }
+      &.minor {
+        background-color: $minor;;
+      }
+      &.cosmetic {
+        background-color: $cosmetic;
+        color: #444;
+      }
+    }
 
     .feature {
       margin: 6px;
@@ -178,6 +216,10 @@ export default {
 
       &.fixing-bugs {
         border-color: red;
+      }
+
+      &.status-in-test {
+        opacity: 0.5;
       }
 
       &.in-test {
@@ -214,16 +256,16 @@ export default {
         }
 
         .critical {
-          color: red;
+          color: $critical;
         }
         .major {
-          color: darkorange;
+          color: $major;
         }
         .minor {
-          color: darkseagreen;
+          color: $minor;;
         }
         .cosmetic {
-          color: lightgrey;
+          color: $cosmetic;
         }
       }
 

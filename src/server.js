@@ -102,6 +102,8 @@ MongoClient.connect(url, { useUnifiedTopology: true, maxIdleTimeMS: maxIdleTime 
       emit('updateConnections', {connections: connections, maxConnections: maxConnections})
     })
 
+    socket.on('sendAlert', (data) => { emit('alert', data) })
+
     socket.on('sendCheckSystemGames', (data) => { dbStore.checkSystemGames(db, io, debugOn) })
 
     socket.on('sendRestartGame', (data) => { dbStore.restartGame(db, io, data, debugOn) })
@@ -119,7 +121,7 @@ MongoClient.connect(url, { useUnifiedTopology: true, maxIdleTimeMS: maxIdleTime 
     socket.on('sendFixBugsInFeature', (data) => { data.status = 'Fixing Bugs';  dbStore.moveFeature(db, io, data, debugOn) })
 
     socket.on('sendDeliverFeature', (data) => { data.status = 'Delivered'; dbStore.moveFeature(db, io, data, debugOn) })
-    
+
     socket.on('sendNextSprint', (data) => { dbStore.nextSprint(db, io, data, debugOn) })
 
     // Facilitator

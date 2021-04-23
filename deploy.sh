@@ -3,6 +3,10 @@
 if [ "$1" == "-f" ]; then
   FORCE=true
 fi
+OUTDATED=true
+if [ "$1" == "-o" ]; then
+  OUTDATED=false
+fi
 
 REPO="https://github.com/hogsmill/no-estimates.git"
 APPS=(
@@ -79,4 +83,6 @@ do
 
 done
 
-php /usr/apps/monitor/src/lib/outdated.php &
+if [ $OUTDATED ]; then
+  php /usr/apps/monitor/src/lib/outdated.php &
+fi

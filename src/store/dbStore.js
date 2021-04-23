@@ -1,9 +1,9 @@
 
 const { v4: uuidv4 } = require('uuid')
 
-const featureFuns = require('./lib/features.js')
+const config = require('./lib/config.js').config
 
-const days = 10
+const featureFuns = require('./lib/features.js')
 
 function loadGames(db, io) {
   db.gamesCollection.find().toArray(function(err, res) {
@@ -25,7 +25,7 @@ function loadGame(db, io, data) {
 
 function resetTeam(team) {
   team.features = featureFuns.features()
-  team.day = 1
+  team.sprint = 1
   team.inTest = false
 
   return team
@@ -49,9 +49,10 @@ module.exports = {
           id: demoId,
           name: 'Demo',
           protected: true,
-          days: days,
-          bugValues: featureFuns.bugValues(),
-          days: 10
+          sprints: config.game.sprints,
+          bugValues: config.bugs.bugValues,
+          sprints: config.game.sprints,
+          sprintLabel: config.game.sprintLabel
         }
         db.gamesCollection.insertOne(game, function(err, res) {
           if (err) throw err
@@ -62,7 +63,7 @@ module.exports = {
               name: teams[i],
               protected: true,
               features: featureFuns.features(),
-              day: 1
+              sprint: 1
             }
             db.gameCollection.insertOne(team, function(err, res) {
               if (err) throw err
@@ -80,7 +81,7 @@ module.exports = {
 
     if (debugOn) { console.log('restartGame', data) }
 
-    db.gamesCollection.updateOne({id: data.gameId}, {$set: {days: days}}, function(err, ) {
+    db.gamesCollection.updateOne({id: data.gameId}, {$set: {sprints: config.game.sprints}}, function(err, ) {
       if (err) throw err
       db.gameCollection.find({gameId: data.gameId}).toArray(function(err, res) {
         if (err) throw err
@@ -176,7 +177,7 @@ module.exports = {
 
     db.gameCollection.findOne({gameId: data.gameId, id: data.teamId}, function(err, res) {
       if (err) throw err
-      res.day = res.day + 1
+      res.sprint = res.sprint + 1
       res.inTest = false
       const id = res._id
       delete res._id
@@ -194,7 +195,7 @@ module.exports = {
       if (err) throw err
       const features = []
       for (let i = 0; i < res.features.length; i++) {
-        let feature = res.features[i]
+        const feature = res.features[i]
         if (feature.id == data.featureId) {
           feature.status = data.status
           switch (data.status) {
