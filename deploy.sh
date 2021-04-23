@@ -1,12 +1,19 @@
 #!/bin/bash
 
-if [ "$1" == "-f" ]; then
-  FORCE=true
-fi
+i=1;
+FORCE=false
 OUTDATED=true
-if [ "$1" == "-o" ]; then
-  OUTDATED=false
-fi
+while [ $1 ]
+do
+  echo $1
+  if [ "$1" == "-f" ]; then
+    FORCE=true
+  fi
+  if [ "$1" == "-o" ]; then
+    OUTDATED=false
+  fi
+  shift
+done
 
 REPO="https://github.com/hogsmill/no-estimates.git"
 APPS=(
