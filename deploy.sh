@@ -90,6 +90,6 @@ do
 
 done
 
-if [ $OUTDATED ]; then
+if [ "$OUTDATED" != "true" ]; then
   php /usr/apps/monitor/src/lib/outdated.php &
 fi
