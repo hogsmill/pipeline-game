@@ -1,6 +1,5 @@
 #!/bin/bash
 
-i=1;
 FORCE=false
 OUTDATED=true
 while [ $1 ]
