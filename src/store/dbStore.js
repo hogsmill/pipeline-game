@@ -4,6 +4,43 @@ const { v4: uuidv4 } = require('uuid')
 const config = require('./lib/config.js').config
 
 const featureFuns = require('./lib/features.js')
+const memberFuns = require('./lib/members.js')
+
+function setGame(id, name, prot) {
+  const game = {
+    id: id,
+    name: name,
+    protected: prot,
+    sprints: config.game.sprints,
+    bugValues: config.bugs.bugValues,
+    sprints: config.game.sprints,
+    sprintLabel: config.game.sprintLabel,
+    maxEffort: config.game.maxEffort
+  }
+  return game
+}
+
+function setTeam(teamData) {
+  const team = teamData
+  team.features = featureFuns.features()
+  team.sprint = 1
+  if (teamData.gameId) {
+    team.gameId = teamData.gameId
+  }
+  if (teamData.id) {
+    team.id = teamData.id
+  }
+  if (teamData.name) {
+    team.name = teamData.name
+  }
+  if (teamData.protected) {
+    team.protected = teamData.protected
+  }
+  if (!teamData.members) {
+    team.members = []
+  }
+  return team
+}
 
 function loadGames(db, io) {
   db.gamesCollection.find().toArray(function(err, res) {
@@ -14,21 +51,22 @@ function loadGames(db, io) {
 
 function loadGame(db, io, data) {
 
-  db.gamesCollection.findOne({id: data.gameId}, function(err, gameRes) {
+  db.gamesCollection.findOne({id: data.id}, function(err, gameRes) {
     if (err) throw err
-    db.gameCollection.findOne({gameId: data.gameId, id: data.teamId}, function(err, res) {
-      if (err) throw err
-      io.emit('updateGame', {game: gameRes, team: res})
-    })
+    io.emit('updateGame', gameRes)
   })
 }
 
-function resetTeam(team) {
-  team.features = featureFuns.features()
-  team.sprint = 1
-  team.inTest = false
+function loadTeam(db, io, data) {
 
-  return team
+  db.gameCollection.findOne({gameId: data.gameId, id: data.id}, function(err, res) {
+    if (err) throw err
+    res.members = memberFuns.add(res.members, data.myName)
+    db.gameCollection.updateOne({_id: res._id}, {$set: {members: res.members}}, function(err, ) {
+      if (err) throw err
+      io.emit('updateTeam', res)
+    })
+  })
 }
 
 module.exports = {
@@ -45,26 +83,16 @@ module.exports = {
       if (res) {
         loadGames(db, io)
       } else {
-        const game = {
-          id: demoId,
-          name: 'Demo',
-          protected: true,
-          sprints: config.game.sprints,
-          bugValues: config.bugs.bugValues,
-          sprints: config.game.sprints,
-          sprintLabel: config.game.sprintLabel
-        }
+        const game = setGame(demoId, 'Demo', true)
         db.gamesCollection.insertOne(game, function(err, res) {
           if (err) throw err
           for (let i = 0; i < teams.length; i++) {
-            const team = {
+            const team = setTeam({
               gameId: demoId,
               id: uuidv4(),
               name: teams[i],
-              protected: true,
-              features: featureFuns.features(),
-              sprint: 1
-            }
+              protected: true
+            })
             db.gameCollection.insertOne(team, function(err, res) {
               if (err) throw err
               if (i == teams.length - 1) {
@@ -81,23 +109,16 @@ module.exports = {
 
     if (debugOn) { console.log('restartGame', data) }
 
-    db.gamesCollection.updateOne({id: data.gameId}, {$set: {sprints: config.game.sprints}}, function(err, ) {
-      if (err) throw err
-      db.gameCollection.find({gameId: data.gameId}).toArray(function(err, res) {
-        if (err) throw err
-        for (let i = 0; i < res.length; i++) {
-          const team = resetTeam(res[i])
-          const id = team._id
-          delete team._id
-          db.gameCollection.updateOne({'_id': id}, {$set: team}, function(err, ) {
-            const teamData = {
-              gameId: data.gameId,
-              teamId: team.id
-            }
-            loadGame(db, io, teamData)
-          })
-        }
-      })
+    db.gameCollection.find({gameId: data.gameId}).toArray(function(err, res) {
+      for (let i = 0; i < res.length; i++) {
+        const team = setTeam(res[i])
+        const id = team._id
+        delete team._id
+        db.gameCollection.updateOne({'_id': id}, {$set: team}, function(err, ) {
+          if (err) throw err
+          io.emit('updateTeam', team)
+        })
+      }
     })
   },
 
@@ -118,6 +139,13 @@ module.exports = {
     loadGame(db, io, data)
   },
 
+  loadTeam: function(db, io, data, debugOn) {
+
+    if (debugOn) { console.log('loadTeam', data) }
+
+    loadTeam(db, io, data)
+  },
+
   selectFeatureToDevelop: function(db, io, data, debugOn) {
 
     if (debugOn) { console.log('selectFeatureToDevelop', data) }
@@ -128,7 +156,17 @@ module.exports = {
       for (let i = 0; i < res.features.length; i++) {
         const feature = res.features[i]
         if (feature.id == data.featureId) {
-          feature.selected = data.selected
+          if (!data.selected) {
+            const selectedBy = []
+            for (let j = 0; j < feature.selectedBy.length; j++) {
+              if (feature.selectedBy[j].id != data.myName.id) {
+                selectedBy.push(feature.selectedBy[j])
+              }
+            }
+            feature.selectedBy = selectedBy
+          } else {
+            feature.selectedBy.push(data.myName)
+          }
         }
         features.push(feature)
       }

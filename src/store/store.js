@@ -36,6 +36,7 @@ export const store = new Vuex.Store({
     teamId: null,
     game: {},
     team: {},
+    myName: {},
     selectedFeatures: [],
     selectedEffort: 0,
     editingGame: {},
@@ -78,6 +79,9 @@ export const store = new Vuex.Store({
     getTeam: (state) => {
       return state.team
     },
+    getMyName: (state) => {
+      return state.myName
+    },
     getFeaturesToDevelop: (state) => {
       return features(state, ['To Develop', 'Fixing Bugs'])
     },
@@ -85,7 +89,24 @@ export const store = new Vuex.Store({
       return features(state, ['In Test'])
     },
     getFeaturesDelivered: (state) => {
-      return features(state, ['Delivered'])
+      const fs = features(state, ['Delivered'])
+      const feats = []
+      for (let i = 0; i < fs.length; i++) {
+        if (fs[i].customer) {
+          feats.push(fs[i])
+        }
+      }
+      return feats
+    },
+    getFeaturesNotWanted: (state) => {
+      const fs = features(state, ['Delivered'])
+      const feats = []
+      for (let i = 0; i < fs.length; i++) {
+        if (!fs[i].customer) {
+          feats.push(fs[i])
+        }
+      }
+      return feats
     },
     getSelectedFeatures: (state) => {
       if (state.team.id) {
@@ -156,6 +177,9 @@ export const store = new Vuex.Store({
     updateTeam: (state, payload) => {
       state.team = payload
     },
+    updateMyName: (state, payload) => {
+      state.myName = payload
+    },
     updateFeatures: (state, payload) => {
       state.features = payload
     },
@@ -196,6 +220,9 @@ export const store = new Vuex.Store({
     },
     updateTeam: ({ commit }, payload) => {
       commit('updateTeam', payload)
+    },
+    updateMyName: ({ commit }, payload) => {
+      commit('updateMyName', payload)
     },
     updateFeatures: ({ commit }, payload) => {
       commit('updateFeatures', payload)

@@ -2,18 +2,17 @@
   <div class="container">
     <SetGame />
     <i v-if="isHost && gameId" title="Restart Game" class="fas fa-undo-alt restart" aria-hidden="true" @click="restart()" />
-    <h1>
-      <span v-if="game.id">{{ game.name }},</span>
-      <span v-if="team.id">Team: {{ team.name }},</span>
+    <h2>
+      <span v-if="game.id">Game: {{ game.name }} - </span>
+      <span v-if="team.id">Team: {{ team.name }} - </span>
+      <span v-if="myName.id">My Name: {{ myName.name }}</span>
+    </h2>
+    <h3>
       <span v-if="team.id">{{ game.sprintLabel }}: {{ team.sprint }}/{{ game.sprints }}</span>
-    </h1>
+    </h3>
+    <Customer />
     <div class="row">
-      <div class="col-8">
-        <DevTeam />
-      </div>
-      <div class="col-4">
-        <Customer />
-      </div>
+      <DevTeam />
     </div>
   </div>
 </template>
@@ -43,6 +42,12 @@ export default {
     },
     team() {
       return this.$store.getters.getTeam
+    },
+    myName() {
+      return this.$store.getters.getMyName
+    },
+    view() {
+      return this.$store.getters.getView
     }
   },
   methods: {

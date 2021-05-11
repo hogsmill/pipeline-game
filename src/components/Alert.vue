@@ -40,7 +40,6 @@ export default {
   },
   created() {
     bus.$on('alert', (data) => {
-      console.log(data)
       if (data.gameId == this.gameId && data.teamId == this.teamId) {
         this.message = data.message
         this.severity = data.severity

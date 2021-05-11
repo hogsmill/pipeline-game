@@ -66,12 +66,19 @@ export default {
 
     this.$store.dispatch('localStorageStatus', ls.check())
 
+    bus.$emit('sendCheckSystemGames')
+
     const gameId = localStorage.getItem('pg-gameId')
     const teamId = localStorage.getItem('pg-teamId')
-    if (gameId && teamId) {
+    const myName = JSON.parse(localStorage.getItem('pg-myName'))
+    if (gameId) {
       this.$store.dispatch('updateGameId', gameId)
+      bus.$emit('sendLoadGame', {id: gameId})
+    }
+    if (teamId && myName) {
       this.$store.dispatch('updateTeamId', teamId)
-      bus.$emit('sendLoadGame', {gameId: gameId, teamId: teamId})
+      this.$store.dispatch('updateMyName', myName)
+      bus.$emit('sendLoadTeam', {gameId: gameId, id: teamId, myName, myName})
     }
 
     bus.$on('connectionError', (data) => {
@@ -83,8 +90,6 @@ export default {
       this.$store.dispatch('updateConnections', data)
     })
 
-    bus.$emit('sendCheckSystemGames')
-
     bus.$on('updateGames', (data) => {
       this.$store.dispatch('updateGames', data)
     })
@@ -94,17 +99,14 @@ export default {
     })
 
     bus.$on('updateGame', (data) => {
-      console.log(data)
-      if (data.game.id && data.game.id == this.gameId) {
-        this.$store.dispatch('updateGame', data.game)
-        if (data.team && data.team.gameId == this.gameId && data.team.id == this.teamId) {
-          this.$store.dispatch('updateTeam', data.team)
-        }
+      console.log('game', data)
+      if (data.id == this.gameId) {
+        this.$store.dispatch('updateGame', data)
       }
     })
 
     bus.$on('updateTeam', (data) => {
-      console.log(data)
+      console.log('team', data)
       if (data.gameId == this.gameId && data.id == this.teamId) {
         this.$store.dispatch('updateTeam', data)
       }

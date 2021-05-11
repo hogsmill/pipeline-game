@@ -114,6 +114,8 @@ MongoClient.connect(url, { useUnifiedTopology: true, maxIdleTimeMS: maxIdleTime 
 
     socket.on('sendLoadGame', (data) => { dbStore.loadGame(db, io, data, debugOn) })
 
+    socket.on('sendLoadTeam', (data) => { dbStore.loadTeam(db, io, data, debugOn) })
+
     socket.on('sendSelectFeatureToDevelop', (data) => { dbStore.selectFeatureToDevelop(db, io, data, debugOn) })
 
     socket.on('sendFeaturesToTest', (data) => { data.status = 'In Test'; dbStore.sendFeaturesToTest(db, io, data, debugOn) })
@@ -123,6 +125,10 @@ MongoClient.connect(url, { useUnifiedTopology: true, maxIdleTimeMS: maxIdleTime 
     socket.on('sendDeliverFeature', (data) => { data.status = 'Delivered'; dbStore.moveFeature(db, io, data, debugOn) })
 
     socket.on('sendNextSprint', (data) => { dbStore.nextSprint(db, io, data, debugOn) })
+
+    socket.on('sendShowCustomer', (data) => { emit('showCustomer', data) })
+    
+    socket.on('sendHideCustomer', (data) => { emit('hideCustomer', data) })
 
     // Facilitator
 

@@ -5,4 +5,5 @@ module.exports = {
     const n = parseInt(Math.random() * arr.length)
     return arr[n]
   }
+  
 }

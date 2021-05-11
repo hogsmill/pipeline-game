@@ -4,10 +4,12 @@ module.exports = {
   config: {
     game: {
       sprints: 10,
-      sprintLabel: 'Sprint'
+      sprintLabel: 'Sprint',
+      maxEffort: 30
     },
     features: {
-      noOfFeatures: 10,
+      noOfFeatures: 24,
+      noOfCustomerFeatures: 16,
       efforts: [10, 20, 30],
       statuses: [
         'To Develop',
@@ -28,7 +30,7 @@ module.exports = {
     },
     customer: {
       customerValues: [
-        0,
+        10,
         20,
         50,
         100

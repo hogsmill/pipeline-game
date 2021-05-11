@@ -42,6 +42,16 @@
               </select>
             </td>
           </tr>
+
+          <!-- My Name -->
+
+          <tr>
+            <td>My Name: </td>
+            <td>
+              <input type="text" id="my-name" :value="myName.name">
+            </td>
+          </tr>
+
         </table>
         <button class="btn btn-sm btn-primary smaller-font" @click="loadGame()">
           Done
@@ -70,6 +80,9 @@ export default {
     },
     team() {
       return this.$store.getters.getTeam
+    },
+    myName() {
+      return this.$store.getters.getMyName
     }
   },
   methods: {
@@ -95,14 +108,27 @@ export default {
     loadGame() {
       const gameId = document.getElementById('game-name-select').value
       const teamId = document.getElementById('team-name-select').value
-      if (!gameId || !teamId) {
-        alert('Please select a game and team')
+      const myName = document.getElementById('my-name').value
+      let myNameData
+      if (this.myName.id) {
+        myNameData = this.myName
+        myNameData.name = myName
+      } else {
+        myNameData = {
+          id: uuidv4(),
+          name: myName
+        }
+      }
+      if (!gameId || !teamId || !myName) {
+        alert('Please select a game, team and your name')
       } else {
         this.$store.dispatch('updateGameId', gameId)
         this.$store.dispatch('updateTeamId', teamId)
+        this.$store.dispatch('updateMyName', myNameData)
         localStorage.setItem('pg-gameId', gameId)
         localStorage.setItem('pg-teamId', teamId)
-        bus.$emit('sendLoadGame', {gameId: gameId, teamId: teamId})
+        localStorage.setItem('pg-myName', JSON.stringify(myNameData))
+        bus.$emit('sendLoadGame', {gameId: gameId, id: teamId, myName: myNameData})
         this.hide()
       }
     }
@@ -143,6 +169,10 @@ export default {
 
       select {
         padding: 0;
+      }
+
+      input {
+        width: 100%;
       }
 
       &.button {

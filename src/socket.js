@@ -27,6 +27,8 @@ bus.$on('sendGetTeams', (data) => { socket.emit('sendGetTeams', data) })
 
 bus.$on('sendLoadGame', (data) => { socket.emit('sendLoadGame', data) })
 
+bus.$on('sendLoadTeam', (data) => { socket.emit('sendLoadTeam', data) })
+
 bus.$on('sendSelectFeatureToDevelop', (data) => { socket.emit('sendSelectFeatureToDevelop', data) })
 
 bus.$on('sendFeaturesToTest', (data) => { socket.emit('sendFeaturesToTest', data) })
@@ -36,6 +38,10 @@ bus.$on('sendFixBugsInFeature', (data) => { socket.emit('sendFixBugsInFeature', 
 bus.$on('sendDeliverFeature', (data) => { socket.emit('sendDeliverFeature', data) })
 
 bus.$on('sendNextSprint', (data) => { socket.emit('sendNextSprint', data) })
+
+bus.$on('sendShowCustomer', (data) => { socket.emit('sendShowCustomer', data) })
+
+bus.$on('sendHideCustomer', (data) => { socket.emit('sendHideCustomer', data) })
 
 // Facilitator
 
@@ -55,6 +61,10 @@ socket.on('updateGame', (data) => { bus.$emit('updateGame', data) })
 socket.on('updateTeam', (data) => { bus.$emit('updateTeam', data) })
 
 socket.on('deliverFeature', (data) => { bus.$emit('deliverFeature', data) })
+
+socket.on('showCustomer', (data) => { bus.$emit('showCustomer', data) })
+
+socket.on('hideCustomer', (data) => { bus.$emit('hideCustomer', data) })
 
 // Facilitator
 

@@ -1,45 +1,3 @@
-/*
-const features = [
-  {
-    id: '111',
-    name: 'feature one',
-    description: 'Feature one description',
-    bugs: [
-      {name: 'bug 11', severity: 'major'},
-      {name: 'bug 12', severity: 'minor'},
-      {name: 'bug 13', severity: 'cosmetic'}
-    ],
-    customer: true,
-    status: statuses[0]
-  },
-  {
-    id: '222',
-    name: 'feature two',
-    description: 'Feature two description',
-    bugs: [
-      {name: 'bug 21', severity: 'critical'},
-      {name: 'bug 22', severity: 'critical'},
-      {name: 'bug 33', severity: 'minor'}
-    ],
-    customer: false,
-    status: statuses[0]
-  },
-  {
-    id: '333',
-    name: 'feature three',
-    description: 'Feature three description',
-    bugs: [
-      {name: 'bug 21', severity: 'critical'},
-      {name: 'bug 22', severity: 'critical'},
-      {name: 'bug 33', severity: 'minor'}
-    ],
-    customer: true,
-    status: statuses[0]
-  }
-]
-*/
-// =======================================================
-
 const { v4: uuidv4 } = require('uuid')
 
 const config = require('./config.js').config
@@ -72,14 +30,55 @@ function generateCustomer() {
 function generateFeature(n) {
   return {
     id: uuidv4(),
+    number: n + 1,
     name: generateName(n),
     description: generateDescription(n),
     effort: listFuns.selectRandomElement(config.features.efforts),
     bugEffort: 0,
     bugs: generateBugs(),
     status: config.features.statuses[0],
+    selectedBy: [],
     customer: generateCustomer()
   }
+}
+
+function position(fs) {
+
+  const notWanted = {}, n = config.features.noOfFeatures - config.features.noOfCustomerFeatures
+  while (Object.keys(notWanted).length < n) {
+    notWanted[parseInt(Math.random() * fs.length)] = true
+  }
+
+  const fs1 = []
+  for (let i = 0; i < fs.length; i++) {
+    const f = fs[i]
+    if (notWanted[i]) {
+      f.customer = 0
+    }
+    fs1.push(f)
+  }
+
+  let features = []
+  let row = 0, column = 0  // 4 x 4 grid
+  while (fs1.length) {
+    const n = parseInt(Math.random() * fs1.length)
+    const feature = fs1.splice(n, 1)[0]
+    if (feature.customer) {
+      feature.row = row
+      feature.column = column
+      column = column + 1
+      if (column > 3) {
+        column = 0
+        row = row + 1
+      }
+    }
+    features.push(feature)
+  }
+  features = features.sort(function(a, b) {
+    return parseInt(a.number) - parseInt(b.number)
+  })
+
+  return features
 }
 
 function generate() {
@@ -91,10 +90,11 @@ function generate() {
   // - customer value
   // ...so we select (say 3) features to develop based on effort
   //
-  const features = []
+  let features = []
   for (let i = 0; i < config.features.noOfFeatures; i++) {
     features.push(generateFeature(i))
   }
+  features = position(features)
   return features
 }
 
@@ -144,7 +144,6 @@ module.exports = {
           bug.seen = false
         }
       }
-      console.log(bug.seen)
       bugs.push(bug)
     }
     return bugs
