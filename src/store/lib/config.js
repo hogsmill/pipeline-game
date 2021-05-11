@@ -4,8 +4,7 @@ module.exports = {
   config: {
     game: {
       sprints: 10,
-      sprintLabel: 'Sprint',
-      maxEffort: 30
+      sprintLabel: 'Sprint'
     },
     features: {
       noOfFeatures: 24,

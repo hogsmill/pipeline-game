@@ -12,7 +12,7 @@
       </div>
     </div>
     <div class="buttons">
-      <button v-if="feature.bugs.length" class="btn btn-sm btn-info" @click="fixBugsInFeature(feature)">
+      <button v-if="unFixedBugs(feature)" class="btn btn-sm btn-info" @click="fixBugsInFeature(feature)">
         Fix Bugs
       </button>
       <button class="btn btn-sm btn-info" @click="deliverFeature(feature)">

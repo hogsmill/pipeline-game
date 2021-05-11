@@ -34,7 +34,9 @@ function generateFeature(n) {
     name: generateName(n),
     description: generateDescription(n),
     effort: listFuns.selectRandomElement(config.features.efforts),
+    effortDone: 0,
     bugEffort: 0,
+    bugEffortDone: 0,
     bugs: generateBugs(),
     status: config.features.statuses[0],
     selectedBy: [],
@@ -147,6 +149,42 @@ module.exports = {
       bugs.push(bug)
     }
     return bugs
+  },
+
+  select: function(fs, featureId, member, selected) {
+    const features = []
+    for (let i = 0; i < fs.length; i++) {
+      const feature = fs[i]
+      const selectedBy = []
+      for (let j = 0; j < feature.selectedBy.length; j++) {
+        const selBy = feature.selectedBy[j]
+        if (selBy.id != member.id) {
+          selectedBy.push(selBy)
+        }
+      }
+      if (fs[i].id == featureId && selected) {
+        selectedBy.push(member)
+      }
+      feature.selectedBy = selectedBy
+      if (feature.status == 'To Develop') {
+        feature.effortDone = feature.selectedBy.length * 10
+      } else {
+        feature.bugEffortDone = feature.selectedBy.length * 10
+      }
+      features.push(feature)
+    }
+    return features
+  },
+
+  nextSprint: function(fs) {
+    const features = []
+    for (let i = 0; i < fs.length; i++) {
+      const feature = fs[i]
+      feature.effortDone = feature.selectedBy.length * 10
+      feature.selectedBy = []
+      features.push(feature)
+    }
+    return features
   }
 
 }

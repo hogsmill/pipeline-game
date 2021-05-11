@@ -17,8 +17,17 @@ function features(state, statuses) {
   return features
 }
 
-function inDevelop(feature) {
-  return feature.status = 'To Develop' || feature.status == 'Fixing Bugs'
+function complete(feature) {
+  let complete
+  switch(feature.status) {
+    case 'To Develop':
+      complete = feature.effortDone == feature.effort
+      break
+    case 'Fixing Bugs':
+      complete = feature.bugEffortDone == feature.bugEffort
+      break
+  }
+  return complete
 }
 
 export const store = new Vuex.Store({
@@ -109,26 +118,15 @@ export const store = new Vuex.Store({
       return feats
     },
     getSelectedFeatures: (state) => {
+      const features = []
       if (state.team.id) {
-        const features = []
         for (let i = 0; i < state.team.features.length; i++) {
-          if (inDevelop(state.team.features[i]) && state.team.features[i].selected) {
+          if (complete(state.team.features[i])) {
             features.push(state.team.features[i])
           }
         }
-        return state.selectedFeatures = features
       }
-    },
-    getSelectedEffort: (state) => {
-      if (state.team.id) {
-        let effort = 0
-        for (let i = 0; i < state.team.features.length; i++) {
-          if (state.team.features[i].status == 'To Develop' && state.team.features[i].selected) {
-            effort = effort + state.team.features[i].effort
-          }
-        }
-        return state.selectedEffort = effort
-      }
+      return features
     },
     getFeatures: (state) => {
       return state.team.features

@@ -24,6 +24,8 @@ function setTeam(teamData) {
   const team = teamData
   team.features = featureFuns.features()
   team.sprint = 1
+  team.inTest = false,
+  team.selected = 0
   if (teamData.gameId) {
     team.gameId = teamData.gameId
   }
@@ -152,25 +154,8 @@ module.exports = {
 
     db.gameCollection.findOne({gameId: data.gameId, id: data.teamId}, function(err, res) {
       if (err) throw err
-      const features = []
-      for (let i = 0; i < res.features.length; i++) {
-        const feature = res.features[i]
-        if (feature.id == data.featureId) {
-          if (!data.selected) {
-            const selectedBy = []
-            for (let j = 0; j < feature.selectedBy.length; j++) {
-              if (feature.selectedBy[j].id != data.myName.id) {
-                selectedBy.push(feature.selectedBy[j])
-              }
-            }
-            feature.selectedBy = selectedBy
-          } else {
-            feature.selectedBy.push(data.myName)
-          }
-        }
-        features.push(feature)
-      }
-      res.features = features
+      res.selected = data.selected ? res.selected + 10 : res.selected - 10 
+      res.features = featureFuns.select(res.features, data.featureId, data.member, data.selected)
       const id = res._id
       delete res._id
       db.gameCollection.updateOne({'_id': id}, {$set: res}, function(err, ) {
@@ -217,6 +202,8 @@ module.exports = {
       if (err) throw err
       res.sprint = res.sprint + 1
       res.inTest = false
+      res.selected = 0
+      res.features = featureFuns.nextSprint(res.features)
       const id = res._id
       delete res._id
       db.gameCollection.updateOne({'_id': id}, {$set: res}, function(err, ) {

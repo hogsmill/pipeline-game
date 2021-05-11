@@ -14,7 +14,6 @@
           To Do ({{ devFeatures.length }})
         </h4>
         <div>
-          <div>Effort: {{ selectedEffort }} / {{ game.maxEffort }}</div>
           <div>
             <button v-if="!team.inTest" class="btn btn-sm btn-info" @click="sendFeaturesToTest()">
               Submit to Test
@@ -24,7 +23,10 @@
             </button>
           </div>
         </div>
-        <div v-for="(feature, index) in devFeatures" :key="index" class="feature" :class="featureClass(feature)">
+        <div>
+          <div v-for="(member, mindex) in team.members" :key="mindex" class="member-selected rounded-circle" :class="{ 'selected': mindex < team.selected / 10}"/>
+        </div>
+        <div v-for="(feature, findex) in devFeatures" :key="findex" class="feature" :class="featureClass(feature)">
           <Feature :feature="feature" />
         </div>
       </div>
@@ -65,9 +67,6 @@ export default {
     },
     selectedFeatures() {
       return this.$store.getters.getSelectedFeatures
-    },
-    selectedEffort() {
-      return this.$store.getters.getSelectedEffort
     },
     testFeatures() {
       return this.$store.getters.getFeaturesInTest
@@ -159,6 +158,19 @@ export default {
         color: #fff;
       }
     }
+
+    .member-selected {
+      width: 12px;
+      height: 12px;
+      margin: 12px 2px 0 2px;;
+      border: 1px solid;
+      display: inline-block;
+
+      &.selected {
+        background-color: #444;
+      }
+    }
+
     .bug-value {
       color: #fff;
       padding: 2px;

@@ -1,18 +1,19 @@
 <template>
-  <div class="dev-team-feature">
+  <div class="dev-team-feature" :class="devComplete(feature)">
     <div v-if="feature.status == 'To Develop'" class="feature-header to-develop">
-      Effort: {{ feature.effort }}
-      <i class="fas fa-snowplow right" />
+      {{ feature.effortDone }}/{{ feature.effort }}
     </div>
     <div v-if="feature.status == 'Fixing Bugs'" class="feature-header fixing-bugs">
-      Bug Effort: {{ feature.bugEffort }}
-      <i v-if="feature.status == 'Fixing Bugs'" class="fas fa-bug right" />
+      {{ feature.bugEffortDone }}/{{ feature.bugEffort }}
     </div>
     <div>
-      {{ feature.name }} <br>
-      <span v-if="feature.fixingBugs">
-        <i class="fas fa-bug" title="Fixing Bugs" />
+      <span v-if="feature.status == 'To Develop'">
+        <i class="fas fa-snowplow" />
       </span>
+      <span v-if="feature.status == 'Fixing Bugs'">
+        <i class="fas fa-bug" />
+      </span>
+      {{ feature.name }}
     </div>
     <div>
       <div class="pattern" :style="{
@@ -23,15 +24,11 @@
     </div>
     <div>
       <div v-for="(member, index) in team.members" :key="index" class="members">
-        <input type="checkbox" :disabled="myName.id != member.id" :checked="featureSelected()" @click="toggleSelectFeature()">
+        <div v-if="myName.id == member.id" class="feature-select rounded-circle" :class="{ 'selected': featureSelected(member) }" @click="toggleSelectFeature()" />
+        <div v-if="myName.id != member.id" class="feature-select other rounded-circle" :class="{ 'selected': featureSelected(member) }" />
         {{ member.name }}
       </div>
     </div>
-    <!--
-    <div>
-      <input type="checkbox" :id="'feature-select-' + feature.id" :checked="feature.selected" :disabled="team.inTest" @click="toggleSelectFeature(feature)">
-    </div>
-    -->
   </div>
 </template>
 
@@ -51,49 +48,56 @@ export default {
     },
     myName() {
       return this.$store.getters.getMyName
-    },
-    selectedEffort() {
-      return this.$store.getters.getSelectedEffort
     }
   },
   methods: {
     effort() {
       return this.feature.selectedBy.length * 10
     },
-    featureSelected() {
-      const self = this
+    devComplete(feature) {
+      let str = ''
+      if (feature.status == 'To Develop' && feature.effortDone == feature.effort) {
+        str = 'dev-complete dev'
+      } else if (feature.status == 'Fixing Bugs' && feature.bugEffortDone == feature.bugEffort) {
+        str = 'dev-complete bug'
+      }
+      return str
+    },
+    featureSelected(member) {
       return this.feature.selectedBy.find(function(m) {
-        return self.myName.id == m.id
+        return member.id == m.id
       })
     },
     toggleSelectFeature() {
-      const selected = !this.featureSelected()
-      if (selected  && this.effort(this.feature) + 10 > this.game.maxEffort) {
-        const message = 'You cannot select more than 30 units of effort. You need to send the selected items to test'
-        bus.$emit('sendAlert', {gameId: this.game.id, teamId: this.team.id, severity: 'error', message: message})
-        //document.getElementById('feature-select-' + feature.id).checked = false
-      } else {
-        bus.$emit('sendSelectFeatureToDevelop', {gameId: this.game.id, teamId: this.team.id, featureId: this.feature.id, myName: this.myName, selected: selected})
-      }
+      const selected = !this.featureSelected(this.myName)
+      bus.$emit('sendSelectFeatureToDevelop', {gameId: this.game.id, teamId: this.team.id, featureId: this.feature.id, member: this.myName, selected: selected})
     }
-    /*
-    toggleSelectFeature(feature) {
-      const selected = document.getElementById('feature-select-' + feature.id).checked
-      if (selected  && this.selectedEffort + this.effort(feature) > this.game.maxEffort) {
-        const message = 'You cannot select more than 30 units of effort. You need to send the selected items to test'
-        bus.$emit('sendAlert', {gameId: this.game.id, teamId: this.team.id, severity: 'error', message: message})
-        document.getElementById('feature-select-' + feature.id).checked = false
-      } else {
-        bus.$emit('sendSelectFeatureToDevelop', {gameId: this.game.id, teamId: this.team.id, featureId: feature.id, myName: this.myName, selected: selected})
-      }
-    }
-    */
   }
 }
 </script>
 
 <style lang="scss">
   .dev-team-feature {
+    box-shadow: 2px 2px 3px #aaa;
+
+    &.dev-complete {
+      color: #fff;
+
+      &.dev {
+        background-color: green;
+      }
+      &.bug {
+        background-color: red;
+      }
+    }
+
+    .fa-snowplow {
+      color: green;
+    }
+
+    .fa-bug {
+      color: red;
+    }
 
     .pattern {
       margin: 0 auto;
@@ -105,6 +109,23 @@ export default {
     .members {
       text-align: left;
       margin: 0 auto;
+
+      .feature-select {
+        width: 12px;
+        height: 12px;
+        margin: 2px 2px 2px 6px;
+        border: 1px solid;
+        display: inline-block;
+        vertical-align: middle;
+
+        &.other {
+          color: #888;
+        }
+
+        &.selected {
+          background-color: #444;
+        }
+      }
     }
   }
 </style>
