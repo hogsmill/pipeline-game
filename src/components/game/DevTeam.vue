@@ -24,7 +24,7 @@
           </div>
         </div>
         <div>
-          <div v-for="(member, mindex) in team.members" :key="mindex" class="member-selected rounded-circle" :class="{ 'selected': mindex < team.selected / 10}"/>
+          <div v-for="(member, mindex) in team.members" :key="mindex" class="member-selected rounded-circle" :class="{ 'selected': mindex < team.selected / 10}" />
         </div>
         <div v-for="(feature, findex) in devFeatures" :key="findex" class="feature" :class="featureClass(feature)">
           <Feature :feature="feature" />

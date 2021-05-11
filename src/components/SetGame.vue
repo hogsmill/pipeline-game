@@ -128,7 +128,8 @@ export default {
         localStorage.setItem('pg-gameId', gameId)
         localStorage.setItem('pg-teamId', teamId)
         localStorage.setItem('pg-myName', JSON.stringify(myNameData))
-        bus.$emit('sendLoadGame', {gameId: gameId, id: teamId, myName: myNameData})
+        bus.$emit('sendLoadGame', {id: gameId})
+        bus.$emit('sendLoadTeam', {gameId: gameId, id: teamId, myName: myNameData})
         this.hide()
       }
     }
