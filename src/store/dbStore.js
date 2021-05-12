@@ -78,7 +78,12 @@ module.exports = {
     if (debugOn) { console.log('checkSystemGames') }
 
     const demoId = '364006d6-859e-4d61-b0f7-7c9d4b6ea5d4'
-    const teams = ['Red', 'Blue', 'Green', 'Purple']
+    const teams = [
+      { name: 'Red', id: 'dbbd0ae0-6ce8-484a-9851-e3822a3c18a6'},
+      { name: 'Blue', id: 'eaf60d50-a2ca-4052-a32a-42545cdd501c'},
+      { name: 'Green', id: 'ed26d222-c9b8-4740-bb60-c859d4ab6f78'},
+      { name: 'Purple', id: 'b89fce08-19b1-4772-8028-bd572b10c1e6'}
+    ]
 
     db.gamesCollection.findOne({id: demoId}, function(err, res) {
       if (err) throw err
@@ -91,8 +96,8 @@ module.exports = {
           for (let i = 0; i < teams.length; i++) {
             const team = setTeam({
               gameId: demoId,
-              id: uuidv4(),
-              name: teams[i],
+              id: teams[i].id,
+              name: teams[i].name,
               protected: true
             })
             db.gameCollection.insertOne(team, function(err, res) {
@@ -154,7 +159,7 @@ module.exports = {
 
     db.gameCollection.findOne({gameId: data.gameId, id: data.teamId}, function(err, res) {
       if (err) throw err
-      res.selected = data.selected ? res.selected + 10 : res.selected - 10 
+      res.selected = data.selected ? res.selected + 10 : res.selected - 10
       res.features = featureFuns.select(res.features, data.featureId, data.member, data.selected)
       const id = res._id
       delete res._id
@@ -179,6 +184,7 @@ module.exports = {
               feature.bugs = featureFuns.fixBugs(feature.bugs)
             }
             feature.status = 'In Test'
+            feature.selectedBy = []
             feature.selected = false
           }
         }

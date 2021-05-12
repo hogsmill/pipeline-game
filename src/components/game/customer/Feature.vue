@@ -9,7 +9,7 @@
   >
     <div>
       <div :class="{ 'delivered': feature.status == 'Delivered' }">
-        <span v-if="feature.status == 'Delivered'">{{ feature.name }} ({{ feature.row }}, {{ feature.column }})</span>
+        <span v-if="feature.status == 'Delivered'">{{ feature.name }}</span>
         (<i class="fas fa-check-circle features-score" title="value to customer" /> {{ feature.customer }},
         <i class="fas fa-bug bugs-score" title="bugs seen" /> {{ featureBugsScore(feature) }},
         <i class="fas fa-bug bugs-not-seen-score" title="bugs seen" /> {{ featureBugsNotSeenScore(feature) }})

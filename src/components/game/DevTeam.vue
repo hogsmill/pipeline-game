@@ -15,10 +15,10 @@
         </h4>
         <div>
           <div>
-            <button v-if="!team.inTest" class="btn btn-sm btn-info" @click="sendFeaturesToTest()">
+            <button :disabled="team.inTest" class="btn btn-sm btn-info" @click="sendFeaturesToTest()">
               Submit to Test
             </button>
-            <button v-if="team.inTest" class="btn btn-sm btn-info" @click="nextSprint()">
+            <button class="btn btn-sm btn-info" @click="nextSprint()">
               Next {{ game.sprintLabel }}
             </button>
           </div>
@@ -212,7 +212,8 @@ export default {
       }
 
       &.in-test {
-        height: 190px;
+        height: 164px;
+        border-color: green;
       }
 
       &.selected {

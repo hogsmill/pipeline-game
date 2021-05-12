@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="test-feature">
     <div class="feature-header">
       {{ feature.name }}
     </div>
@@ -59,3 +59,25 @@
    }
 }
 </script>
+
+<style lang="scss">
+  .test-feature {
+
+    p {
+      margin: 0;
+    }
+
+    .bug {
+      font-size: x-large;
+    }
+
+    .buttons {
+      margin-top: 4px;
+      padding: 0;
+
+      button {
+        margin: 2px;
+      }
+    }
+  }
+</style>

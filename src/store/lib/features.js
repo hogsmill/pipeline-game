@@ -166,11 +166,6 @@ module.exports = {
         selectedBy.push(member)
       }
       feature.selectedBy = selectedBy
-      if (feature.status == 'To Develop') {
-        feature.effortDone = feature.selectedBy.length * 10
-      } else {
-        feature.bugEffortDone = feature.selectedBy.length * 10
-      }
       features.push(feature)
     }
     return features
@@ -180,7 +175,11 @@ module.exports = {
     const features = []
     for (let i = 0; i < fs.length; i++) {
       const feature = fs[i]
-      feature.effortDone = feature.selectedBy.length * 10
+      if (feature.status == 'To Develop') {
+        feature.effortDone = feature.effortDone + feature.selectedBy.length * 10
+      } else if (feature.status == 'Fixing Bugs') {
+        feature.bugEffortDone = feature.bugEffortDone + feature.selectedBy.length * 10
+      }
       feature.selectedBy = []
       features.push(feature)
     }

@@ -22,10 +22,10 @@
         </div>
         <div class="tabs">
           <div :class="{ 'selected': tab == 'delivered'}" @click="selectTab('delivered')">
-            Features Delivered
+            Features Delivered ({{ featuresDelivered.length }})
           </div>
           <div :class="{ 'selected': tab == 'not-wanted'}" @click="selectTab('not-wanted')">
-            Features Not Wanted
+            Features Not Wanted ({{ featuresNotWanted.length }})
           </div>
         </div>
         <div v-if="tab == 'delivered'" class="features">

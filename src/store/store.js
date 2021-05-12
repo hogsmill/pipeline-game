@@ -21,10 +21,10 @@ function complete(feature) {
   let complete
   switch(feature.status) {
     case 'To Develop':
-      complete = feature.effortDone == feature.effort
+      complete = feature.effortDone + feature.selectedBy.length * 10 == feature.effort
       break
     case 'Fixing Bugs':
-      complete = feature.bugEffortDone == feature.bugEffort
+      complete = feature.bugEffortDone + feature.selectedBy.length * 10  == feature.bugEffort
       break
   }
   return complete

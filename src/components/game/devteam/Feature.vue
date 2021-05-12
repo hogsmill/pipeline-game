@@ -1,10 +1,10 @@
 <template>
   <div class="dev-team-feature" :class="devComplete(feature)">
     <div v-if="feature.status == 'To Develop'" class="feature-header to-develop">
-      {{ feature.effortDone }}/{{ feature.effort }}
+      {{ feature.effortDone + feature.selectedBy.length * 10 }}/{{ feature.effort }}
     </div>
     <div v-if="feature.status == 'Fixing Bugs'" class="feature-header fixing-bugs">
-      {{ feature.bugEffortDone }}/{{ feature.bugEffort }}
+      {{ feature.bugEffortDone + feature.selectedBy.length * 10 }}/{{ feature.bugEffort }}
     </div>
     <div>
       <span v-if="feature.status == 'To Develop'">
@@ -56,9 +56,9 @@ export default {
     },
     devComplete(feature) {
       let str = ''
-      if (feature.status == 'To Develop' && feature.effortDone == feature.effort) {
+      if (feature.status == 'To Develop' && feature.effortDone + feature.selectedBy.length * 10 == feature.effort) {
         str = 'dev-complete dev'
-      } else if (feature.status == 'Fixing Bugs' && feature.bugEffortDone == feature.bugEffort) {
+      } else if (feature.status == 'Fixing Bugs' && feature.bugEffortDone + feature.selectedBy.length * 10 == feature.bugEffort) {
         str = 'dev-complete bug'
       }
       return str
