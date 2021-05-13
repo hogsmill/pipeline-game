@@ -51,9 +51,9 @@ export default {
     show() {
       const self = this
       this.$modal.show('alert')
-      //setTimeout(function() {
-      //  self.hide()
-      //}, 2000)
+      setTimeout(() => {
+        self.hide()
+      }, 3000)
     },
     hide() {
       this.$modal.hide('alert')

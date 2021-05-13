@@ -13,12 +13,12 @@
       <div class="mt-4">
         <h4>Customer</h4>
         <h5>
-          Score: {{ featuresScore() - bugsScore() }}
+          Value Delivered: {{ delivered().features - delivered().bugs }}
         </h5>
         <div>
-          <i class="fas fa-check-circle features-score" title="↑ for features" /> {{ featuresScore() }},
-          <i class="fas fa-bug bugs-score" title="↓ for bugs" /> -{{ bugsScore() }}
-          (<i class="fas fa-bug bugs-not-seen-score" title="bugs not seen" /> <i>{{ bugsNotSeenScore() }}</i>)
+          <i class="fas fa-check-circle features-score" title="↑ for features" /> {{ delivered().features }},
+          <i class="fas fa-bug bugs-score" title="↓ for bugs" /> -{{ delivered().bugs }}
+          (<i class="fas fa-bug bugs-not-seen-score" title="bugs not seen" /> <i>{{ delivered().bugsNotSeen }}</i>)
         </div>
         <div class="tabs">
           <div :class="{ 'selected': tab == 'delivered'}" @click="selectTab('delivered')">
@@ -100,44 +100,8 @@ export default {
     selectTab(tab) {
       this.tab = tab
     },
-    featuresScore() {
-      let score = 0
-      for (let i = 0; i < this.featuresDelivered.length; i++) {
-        score = score + this.featuresDelivered[i].customer
-      }
-      return score
-    },
-    bugsScore() {
-      let score = 0
-      for (let i = 0; i < this.featuresDelivered.length; i++) {
-        const bugs = this.featuresDelivered[i].bugs
-        for (let j = 0; j < bugs.length; j++) {
-          if (!bugs[j].fixed && bugs[j].seen) {
-            score = score + this.bugValues[bugs[j].severity]
-          }
-        }
-      }
-      return score
-    },
-    bugsNotSeenScore() {
-      let score = 0, i, j
-      for (i = 0; i < this.featuresDelivered.length; i++) {
-        const bugs = this.featuresDelivered[i].bugs
-        for (j = 0; j < bugs.length; j++) {
-          if (!bugs[j].fixed && !bugs[j].seen) {
-            score = score + this.bugValues[bugs[j].severity]
-          }
-        }
-      }
-      for (i = 0; i < this.featuresNotWanted.length; i++) {
-        const bugs = this.featuresNotWanted[i].bugs
-        for (j = 0; j < bugs.length; j++) {
-          if (!bugs[j].fixed && !bugs[j].seen) {
-            score = score + this.bugValues[bugs[j].severity]
-          }
-        }
-      }
-      return score
+    delivered() {
+      return this.team.delivered[this.team.delivered.length - 1]
     }
   }
 }
@@ -145,6 +109,10 @@ export default {
 
 <style lang="scss">
   .customer {
+
+    h5 {
+      text-align: center;
+    }
 
     .tabs {
       div {

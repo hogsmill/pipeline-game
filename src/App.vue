@@ -99,15 +99,15 @@ export default {
     })
 
     bus.$on('updateGame', (data) => {
-      console.log('game', data)
       if (data.id == this.gameId) {
+        console.log('game', data)
         this.$store.dispatch('updateGame', data)
       }
     })
 
     bus.$on('updateTeam', (data) => {
-      console.log('team', data)
       if (data.gameId == this.gameId && data.id == this.teamId) {
+        console.log('team', data)
         this.$store.dispatch('updateTeam', data)
       }
     })

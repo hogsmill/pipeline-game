@@ -105,7 +105,7 @@ export default {
       return c
     },
     featureIsSelected(feature) {
-      return !!this.selectedFeatures.find(function(f) {
+      return !!this.selectedFeatures.find((f) => {
         return f.id == feature.id
       })
     },
@@ -122,6 +122,9 @@ export default {
     nextSprint() {
       if (this.testFeatures.length) {
         const message = 'You still have items in test. Deliver them or return them to dev to fix bugs'
+        bus.$emit('sendAlert', {gameId: this.game.id, teamId: this.team.id, severity: 'warning', message: message})
+      } else if (this.team.sprint + 1 >= this.game.sprints) {
+        const message = 'Game over; there are no sprints left'
         bus.$emit('sendAlert', {gameId: this.game.id, teamId: this.team.id, severity: 'warning', message: message})
       } else {
         bus.$emit('sendNextSprint', {gameId: this.game.id, teamId: this.team.id})
@@ -239,7 +242,10 @@ export default {
 
         &.fixed {
           background-color: green;
-          color: #fff;
+          i {
+            color: #fff;
+            opacity: 0.4;
+          }
         }
 
         .critical {

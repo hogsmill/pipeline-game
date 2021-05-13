@@ -3,7 +3,7 @@ module.exports = {
 
   config: {
     game: {
-      sprints: 10,
+      sprints: 20,
       sprintLabel: 'Sprint'
     },
     features: {
@@ -20,6 +20,7 @@ module.exports = {
     bugs: {
       maxNoOfBugs: 3,
       bugEffort: 10,
+      bugFixRate: 0.66,
       bugValues: {
         'critical': 50,
         'major': 25,
@@ -34,6 +35,9 @@ module.exports = {
         50,
         100
       ]
+    },
+    member: {
+      effortPerMember: 10
     }
   }
 }

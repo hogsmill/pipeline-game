@@ -3,15 +3,15 @@ const { v4: uuidv4 } = require('uuid')
 const config = require('./config.js').config
 const listFuns = require('./lists.js')
 
-function generateName(n) {
+const generateName = (n) => {
   return 'Feature ' + parseInt(n + 1)
 }
 
-function generateDescription(n) {
+const generateDescription = (n) => {
   return 'Feature ' + parseInt(n + 1) + ' description'
 }
 
-function generateBugs() {
+const generateBugs = () => {
   const bugs = []
   const noOfBugs = parseInt(Math.random() * config.bugs.maxNoOfBugs)
   for (let i = 0; i < noOfBugs; i++) {
@@ -23,11 +23,11 @@ function generateBugs() {
   return bugs
 }
 
-function generateCustomer() {
+const generateCustomer = () => {
   return listFuns.selectRandomElement(config.customer.customerValues)
 }
 
-function generateFeature(n) {
+const generateFeature = (n) => {
   return {
     id: uuidv4(),
     number: n + 1,
@@ -44,7 +44,7 @@ function generateFeature(n) {
   }
 }
 
-function position(fs) {
+const position = (fs) => {
 
   const notWanted = {}, n = config.features.noOfFeatures - config.features.noOfCustomerFeatures
   while (Object.keys(notWanted).length < n) {
@@ -76,20 +76,19 @@ function position(fs) {
     }
     features.push(feature)
   }
-  features = features.sort(function(a, b) {
+  features = features.sort((a, b) => {
     return parseInt(a.number) - parseInt(b.number)
   })
 
   return features
 }
 
-function generate() {
+const generate = () => {
 
-  // Include:
-  // - feature overides anohter  feature
+  // To include in future:
+  // - feature overides another feature
   // - feature fixes a bug
-  // - effort
-  // - customer value
+  // - customer can see bug in any sprint until fixed
   // ...so we select (say 3) features to develop based on effort
   //
   let features = []
@@ -100,6 +99,9 @@ function generate() {
   return features
 }
 
+const bugValue = (bug) => {
+  return config.bugs.bugValues[bug.severity]
+}
 module.exports = {
 
   features: function() {
@@ -114,7 +116,7 @@ module.exports = {
     let effort = 0
     for (let i = 0; i < bugs.length; i++) {
       if (!bugs[i].fixed) {
-        effort = effort + 10
+        effort = effort + config.bugs.bugEffort
       }
     }
     return effort
@@ -126,7 +128,7 @@ module.exports = {
     for (i = 0; i < featureBugs.length; i++) {
       const bug = featureBugs[i]
       if (!bug.fixed) {
-        if (Math.random() > 0.5) {
+        if (Math.random() > config.bugs.bugFixRate) {
           bug.fixed = true
         }
       }
@@ -184,6 +186,44 @@ module.exports = {
       features.push(feature)
     }
     return features
+  },
+
+  featuresScore: function(fs) {
+    let score = 0
+    for (let i = 0; i < fs.length; i++) {
+      if (fs[i].status == 'Delivered') {
+        score = score + fs[i].customer
+      }
+    }
+    return score
+  },
+
+  bugsScore: function(fs) {
+    let score = 0
+    for (let i = 0; i < fs.length; i++) {
+      const bugs = fs[i].bugs
+      for (let j = 0; j < bugs.length; j++) {
+        if (!bugs[j].fixed && bugs[j].seen) {
+          score = score + bugValue(bugs[j])
+        }
+      }
+    }
+    return score
+  },
+
+  bugsNotSeenScore: function(fs) {
+    let score = 0, i, j
+    for (i = 0; i < fs.length; i++) {
+      if (fs.status == 'Delivered') {
+        const bugs = fs[i].bugs
+        for (j = 0; j < bugs.length; j++) {
+          if (!bugs[j].fixed && !bugs[j].seen) {
+            score = score + bugValues(bugs[j])
+          }
+        }
+      }
+    }
+    return score
   }
 
 }

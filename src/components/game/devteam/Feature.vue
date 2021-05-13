@@ -6,7 +6,7 @@
     <div v-if="feature.status == 'Fixing Bugs'" class="feature-header fixing-bugs">
       {{ feature.bugEffortDone + feature.selectedBy.length * 10 }}/{{ feature.bugEffort }}
     </div>
-    <div>
+    <div class="feature-title">
       <span v-if="feature.status == 'To Develop'">
         <i class="fas fa-snowplow" />
       </span>
@@ -64,7 +64,7 @@ export default {
       return str
     },
     featureSelected(member) {
-      return this.feature.selectedBy.find(function(m) {
+      return this.feature.selectedBy.find((m) => {
         return member.id == m.id
       })
     },
@@ -79,6 +79,13 @@ export default {
 <style lang="scss">
   .dev-team-feature {
     box-shadow: 2px 2px 3px #aaa;
+
+    .feature-title {
+      i {
+        float: left;
+        padding: 3px;
+      }
+    }
 
     &.dev-complete {
       color: #fff;

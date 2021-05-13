@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
-function features(state, statuses) {
+const features = (state, statuses) => {
   const features = []
   if (state.team.id) {
     for (let i = 0; i < state.team.features.length; i++) {
@@ -17,7 +17,7 @@ function features(state, statuses) {
   return features
 }
 
-function complete(feature) {
+const complete = (feature) => {
   let complete
   switch(feature.status) {
     case 'To Develop':

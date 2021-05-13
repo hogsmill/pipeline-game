@@ -12,7 +12,7 @@ const logFile = prod ? process.argv[4] : 'server.log'
 const gameCollection =  prod ? process.env.VUE_APP_COLLECTION : 'pipeline'
 const gamesCollection =  prod ? process.env.VUE_APP_GAME_COLLECTION : 'pipelineGames'
 
-ON_DEATH(function(signal, err) {
+ON_DEATH((signal, err) => {
   let logStr = new Date()
   if (signal) {
     logStr = logStr + ' ' + signal + '\n'
@@ -20,7 +20,7 @@ ON_DEATH(function(signal, err) {
   if (err && err.stack) {
     logStr = logStr + '  ' + err.stack + '\n'
   }
-  fs.appendFile(logFile, logStr, function (err) {
+  fs.appendFile(logFile, logStr, (err) => {
     if (err) console.log(logStr)
     process.exit()
   })
@@ -67,19 +67,19 @@ const debugOn = !prod
 const connections = {}
 const maxConnections = 2000
 
-function emit(event, data) {
+const emit = (event, data) => {
   if (debugOn) {
     console.log(event, data, '(emit)')
   }
   io.emit(event, data)
 }
 
-MongoClient.connect(url, { useUnifiedTopology: true, maxIdleTimeMS: maxIdleTime }, function (err, client) {
+MongoClient.connect(url, { useUnifiedTopology: true, maxIdleTimeMS: maxIdleTime }, (err, client) => {
   if (err) throw err
   const db = client.db('db')
 
-  db.createCollection(gameCollection, function(error, collection) {})
-  db.createCollection(gamesCollection, function(error, collection) {})
+  db.createCollection(gameCollection, (error, collection) => {})
+  db.createCollection(gamesCollection, (error, collection) => {})
 
   db.gameCollection = db.collection(gameCollection)
   db.gamesCollection = db.collection(gamesCollection)
@@ -127,7 +127,7 @@ MongoClient.connect(url, { useUnifiedTopology: true, maxIdleTimeMS: maxIdleTime 
     socket.on('sendNextSprint', (data) => { dbStore.nextSprint(db, io, data, debugOn) })
 
     socket.on('sendShowCustomer', (data) => { emit('showCustomer', data) })
-    
+
     socket.on('sendHideCustomer', (data) => { emit('hideCustomer', data) })
 
     // Facilitator
