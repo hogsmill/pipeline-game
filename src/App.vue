@@ -78,7 +78,7 @@ export default {
     if (teamId && myName) {
       this.$store.dispatch('updateTeamId', teamId)
       this.$store.dispatch('updateMyName', myName)
-      bus.$emit('sendLoadTeam', {gameId: gameId, id: teamId, myName, myName})
+      bus.$emit('sendLoadTeam', {gameId: gameId, id: teamId})
     }
 
     bus.$on('connectionError', (data) => {

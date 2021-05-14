@@ -1,7 +1,7 @@
 <template>
   <span>
 
-    <button class="btn btn-sm btn-secondary smaller-font" @click="show()">
+    <button class="btn btn-sm btn-secondary smaller-font" :disabled="team.sprint > 1" @click="show()">
       Set Up
     </button>
 
@@ -129,7 +129,7 @@ export default {
         localStorage.setItem('pg-teamId', teamId)
         localStorage.setItem('pg-myName', JSON.stringify(myNameData))
         bus.$emit('sendLoadGame', {id: gameId})
-        bus.$emit('sendLoadTeam', {gameId: gameId, id: teamId, myName: myNameData})
+        bus.$emit('sendLoadTeam', {gameId: gameId, id: teamId, myName: myNameData, setGame: true})
         this.hide()
       }
     }

@@ -20,32 +20,34 @@ const setGame = (id, name, prot) => {
   return game
 }
 
-const setTeam = (teamData) => {
+const setTeam = (teamData, reset) => {
   const team = teamData
-  team.features = featureFuns.features()
-  team.delivered = [
-    {
-      features: 0, 
-      bugs: 0,
-      bugsNotSeen: 0
-    }
-  ]
-  team.sprint = 1
-  team.inTest = false,
-  team.selected = 0
-  if (teamData.gameId) {
+  if (!team.features || reset) {
+    team.features = featureFuns.features()
+    team.delivered = [
+      {
+        features: 0,
+        bugs: 0,
+        bugsNotSeen: 0
+      }
+    ]
+    team.sprint = 1
+    team.inTest = false,
+    team.selected = 0
+  }
+  if (!team.gameId) {
     team.gameId = teamData.gameId
   }
-  if (teamData.id) {
+  if (!team.id) {
     team.id = teamData.id
   }
-  if (teamData.name) {
+  if (!team.name) {
     team.name = teamData.name
   }
-  if (teamData.protected) {
+  if (!team.protected) {
     team.protected = teamData.protected
   }
-  if (!teamData.members) {
+  if (!team.members) {
     team.members = []
   }
   return team
@@ -68,13 +70,25 @@ const loadGame = (db, io, data) => {
 
 const loadTeam = (db, io, data) => {
 
-  db.gameCollection.findOne({gameId: data.gameId, id: data.id}, (err, res) => {
+  db.gameCollection.find({gameId: data.gameId}).toArray((err, res) => {
     if (err) throw err
-    res.members = memberFuns.add(res.members, data.myName)
-    db.gameCollection.updateOne({_id: res._id}, {$set: {members: res.members}}, (err, ) => {
-      if (err) throw err
-      io.emit('updateTeam', res)
-    })
+    for (let i = 0; i < res.length; i++) {
+      let team = res[i]
+      if (data.myName) {
+        team = setTeam(team)
+        if (team.id != data.id) {
+          team.members = memberFuns.remove(team.members, data.myName)
+        } else {
+          team.members = memberFuns.add(team.members, data.myName)
+        }
+      }
+      const id = team._id
+      delete team._id
+      db.gameCollection.updateOne({_id: id}, {$set: team}, (err, ) => {
+        if (err) throw err
+        io.emit('updateTeam', team)
+      })
+    }
   })
 }
 
@@ -125,7 +139,7 @@ module.exports = {
 
     db.gameCollection.find({gameId: data.gameId}).toArray((err, res) => {
       for (let i = 0; i < res.length; i++) {
-        const team = setTeam(res[i])
+        const team = setTeam(res[i], true)
         const id = team._id
         delete team._id
         db.gameCollection.updateOne({'_id': id}, {$set: team}, (err, ) => {
