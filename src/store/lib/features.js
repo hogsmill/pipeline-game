@@ -203,7 +203,7 @@ module.exports = {
     for (let i = 0; i < fs.length; i++) {
       const bugs = fs[i].bugs
       for (let j = 0; j < bugs.length; j++) {
-        if (!bugs[j].fixed && bugs[j].seen) {
+        if (fs.customer && !bugs[j].fixed && bugs[j].seen) {
           score = score + bugValue(bugs[j])
         }
       }
