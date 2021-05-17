@@ -26,6 +26,7 @@ const setTeam = (teamData, reset) => {
     team.features = featureFuns.features()
     team.delivered = [
       {
+        noOfFeatures: 0,
         features: 0,
         bugs: 0,
         bugsNotSeen: 0
@@ -232,6 +233,7 @@ module.exports = {
       res.selected = 0
       res.features = featureFuns.nextSprint(res.features)
       res.delivered.push({
+        noOfFeatures: featureFuns.featuresCount(res.features),
         features: featureFuns.featuresScore(res.features),
         bugs: featureFuns.bugsScore(res.features),
         bugsNotSeen: featureFuns.bugsNotSeenScore(res.features)

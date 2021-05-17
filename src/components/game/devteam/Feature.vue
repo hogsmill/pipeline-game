@@ -17,8 +17,8 @@
     </div>
     <div>
       <div class="pattern" :style="{
-        'background-position-x': feature.column * -50 + 'px',
-        'background-position-y': feature.row * -25 + 'px'
+        'background-position-x': column(),
+        'background-position-y': row()
       }"
       />
     </div>
@@ -54,6 +54,14 @@ export default {
     effort() {
       return this.feature.selectedBy.length * 10
     },
+    column() {
+      const col = this.feature.column ? parseInt(this.feature.column * -50) : 0
+      return col + 'px'
+    },
+    row() {
+      const row = this.feature.row ? parseInt(this.feature.row * -25) : 0
+      return row + 'px'
+    },
     devComplete(feature) {
       let str = ''
       if (feature.status == 'To Develop' && feature.effortDone + feature.selectedBy.length * 10 == feature.effort) {
@@ -69,8 +77,10 @@ export default {
       })
     },
     toggleSelectFeature() {
-      const selected = !this.featureSelected(this.myName)
-      bus.$emit('sendSelectFeatureToDevelop', {gameId: this.game.id, teamId: this.team.id, featureId: this.feature.id, member: this.myName, selected: selected})
+      if (!this.team.inTest) {
+        const selected = !this.featureSelected(this.myName)
+        bus.$emit('sendSelectFeatureToDevelop', {gameId: this.game.id, teamId: this.team.id, featureId: this.feature.id, member: this.myName, selected: selected})
+      }
     }
   }
 }

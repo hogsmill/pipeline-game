@@ -198,6 +198,16 @@ module.exports = {
     return score
   },
 
+  featuresCount: function(fs) {
+    let count = 0
+    for (let i = 0; i < fs.length; i++) {
+      if (fs[i].status == 'Delivered' && fs[i].customer) {
+        count = count + 1
+      }
+    }
+    return count
+  },
+
   bugsScore: function(fs) {
     let score = 0
     for (let i = 0; i < fs.length; i++) {

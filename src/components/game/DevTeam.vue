@@ -127,6 +127,7 @@ export default {
         const message = 'Game over; there are no sprints left'
         bus.$emit('sendAlert', {gameId: this.game.id, teamId: this.team.id, severity: 'warning', message: message})
       } else {
+        bus.$emit('sendShowCustomer', {gameId: this.game.id, id: this.team.id})
         bus.$emit('sendNextSprint', {gameId: this.game.id, teamId: this.team.id})
       }
     }
