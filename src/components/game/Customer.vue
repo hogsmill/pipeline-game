@@ -101,7 +101,7 @@ export default {
       this.tab = tab
     },
     delivered() {
-      return this.team.delivered[this.team.delivered.length - 1]
+      return this.team.delivered ? this.team.delivered[this.team.delivered.length - 1] : 0
     }
   }
 }
