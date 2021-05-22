@@ -4,9 +4,11 @@
       <div class="control-header">
         <h5 class="card-title">
           Workshops and Games/Teams
+          <i v-if="showGamesAndTeams" @click="setShowGamesAndTeams(false)" title="collapse" class="fas fa-caret-up toggle" />
+          <i v-if="!showGamesAndTeams" @click="setShowGamesAndTeams(true)" title="expand" class="fas fa-caret-down toggle" />
         </h5>
       </div>
-      <div>
+      <div v-if="showGamesAndTeams">
         <table class="config-table">
           <tr>
             <td>
@@ -48,10 +50,30 @@
               <table class="teams-table">
                 <tr v-for="(team, index) in editingTeams" :key="index">
                   <td>
+                    <input :id="'team-' + team.id" type="checkbox" :checked="editingTeam && team.id == editingTeam.id" @click="selectTeam(team.id)">
+                  </td>
+                  <td>
                     {{ team.name }}
                   </td>
                   <td>
                     <i v-if="!team.protected" @click="deleteTeam(team)" :title="'Delete ' + team.name" class="fas fa-trash-alt" />
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Members
+            </td>
+            <td>
+              <table v-if="editingTeam">
+                <tr v-for="(member, index) in editingTeam.members" :key="index">
+                  <td>
+                    {{ member.name }}
+                  </td>
+                  <td>
+                    <i class="fas fa-trash-alt" :title="'Delete ' + member.name" @click="deleteTeamMember(member)" />
                   </td>
                 </tr>
               </table>
@@ -67,6 +89,11 @@
 import bus from '../../socket.js'
 
 export default {
+  data() {
+    return {
+      showGamesAndTeams: false
+    }
+  },
   computed: {
     workshops() {
       return this.$store.getters.getWorkshops
@@ -79,16 +106,20 @@ export default {
     },
     editingTeams() {
       return this.$store.getters.getEditingTeams
+    },
+    editingTeam() {
+      return this.$store.getters.getEditingTeam
     }
   },
   created() {
-    bus.$emit('sendLoadEditingGame', {gameId: ''})
-
-    bus.$on('updateEditingTeams', (data) => {
-      this.$store.dispatch('updateEditingTeams', data)
+    bus.$on('loadEditingGame', (data) => {
+      this.$store.dispatch('updateEditingGame', data)
     })
   },
   methods: {
+    setShowGamesAndTeams(val) {
+      this.showGamesAndTeams = val
+    },
     addGame() {
       const game = document.getElementById('new-game').value
       if (!game) {
@@ -100,13 +131,30 @@ export default {
     },
     selectGame(id) {
       const checked = document.getElementById('game-' + id).checked
-      bus.$emit('sendLoadEditingTeams', {gameId: checked ? id : ''})
+      if (!checked) {
+        this.$store.dispatch('updateEditingGame', '')
+      } else {
+        bus.$emit('sendLoadEditingGame', {gameId: id})
+      }
     },
     deleteGame(game) {
       if (confirm('Delete ' + game.name + '?')) {
         bus.$emit('sendDeleteGame', {gameId: game.id})
       }
-    }
+    },
+    selectTeam(id) {
+      const checked = document.getElementById('team-' + id).checked
+      if (!checked) {
+        this.$store.dispatch('updateEditingTeamId', '')
+      } else {
+        this.$store.dispatch('updateEditingTeamId', id)
+      }
+    },
+    deleteTeamMember(member) {
+      if (confirm('Delete ' + member.name + '?')) {
+        bus.$emit('sendDeleteTeamMember', {gameId: this.editingGame.id, teamId: this.editingTeam.id, id: member.id})
+      }
+    },
   }
 }
 </script>

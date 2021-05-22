@@ -49,7 +49,8 @@ export const store = new Vuex.Store({
     selectedFeatures: [],
     selectedEffort: 0,
     editingGame: {},
-    editingTeams: []
+    editingTeams: [],
+    editingTeam: {}
   },
   getters: {
     thisGame: (state) => {
@@ -139,6 +140,11 @@ export const store = new Vuex.Store({
     },
     getEditingTeams: (state) => {
       return state.editingTeams
+    },
+    getEditingTeam: (state) => {
+      return state.editingTeams.find((t) => {
+        return t.editing
+      })
     }
   },
   mutations: {
@@ -181,8 +187,24 @@ export const store = new Vuex.Store({
     updateFeatures: (state, payload) => {
       state.features = payload
     },
-    updateEditingTeams: (state, payload) => {
-      state.editingTeams = payload
+    updateEditingGame: (state, payload) => {
+      if (!payload) {
+        payload = {
+          game: {},
+          teams: []
+        }
+      }
+      state.editingGame = payload.game
+      state.editingTeams = payload.teams
+    },
+    updateEditingTeamId: (state, payload) => {
+      const teams = []
+      for (let i = 0; i < state.editingTeams.length; i++) {
+        const team = state.editingTeams[i]
+        team.editing = team.id == payload
+        teams.push(team)
+      }
+      state.editingTeams = teams
     }
   },
   actions: {
@@ -225,8 +247,11 @@ export const store = new Vuex.Store({
     updateFeatures: ({ commit }, payload) => {
       commit('updateFeatures', payload)
     },
-    updateEditingTeams: ({ commit }, payload) => {
-      commit('updateEditingTeams', payload)
+    updateEditingGame: ({ commit }, payload) => {
+      commit('updateEditingGame', payload)
+    },
+    updateEditingTeamId: ({ commit }, payload) => {
+      commit('updateEditingTeamId', payload)
     },
   }
 })

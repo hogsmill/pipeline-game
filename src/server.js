@@ -132,8 +132,9 @@ MongoClient.connect(url, { useUnifiedTopology: true, maxIdleTimeMS: maxIdleTime 
 
     // Facilitator
 
-    socket.on('sendLoadEditingTeams', (data) => { dbStore.loadEditingTeams(db, io, data, debugOn) })
+    socket.on('sendLoadEditingGame', (data) => { dbStore.loadEditingGame(db, io, data, debugOn) })
 
+    socket.on('sendDeleteTeamMember', (data) => { dbStore.deleteTeamMember(db, io, data, debugOn) })
   })
 })
 

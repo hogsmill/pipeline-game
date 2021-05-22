@@ -13,7 +13,7 @@
         <h4>
           To Do ({{ devFeatures.length }})
         </h4>
-        <div>
+        <div v-if="team.sprint > 0">
           <div>
             <button :disabled="team.inTest" class="btn btn-sm btn-info" @click="sendFeaturesToTest()">
               Submit to Test

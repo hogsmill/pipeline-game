@@ -3,6 +3,7 @@
     <div class="connections">
       Current server connections: {{ connections.connections }} / {{ connections.maxConnections }}
     </div>
+    <GameDisplay />
     <GamesAndTeams />
     <LocalStorage />
   </div>
@@ -11,11 +12,13 @@
 <script>
 import bus from '../socket.js'
 
+import GameDisplay from './facilitator/GameDisplay.vue'
 import GamesAndTeams from './facilitator/GamesAndTeams.vue'
 import LocalStorage from './facilitator/LocalStorage.vue'
 
 export default {
   components: {
+    GameDisplay,
     GamesAndTeams,
     LocalStorage
   },
@@ -46,6 +49,14 @@ h5 {
   text-align: left;
 }
 
+.config {
+  i.fas {
+    color: #aaa;
+    font-size: xx-large;
+    position: absolute;
+    right: 24px;
+  }
+}
 .config-table {
   width: 90%;
   margin: 0 auto;

@@ -19,7 +19,7 @@ module.exports = {
   },
 
   remove: function(mems, mem) {
-    let found = false
+    const found = false
     const members = []
     for (let i = 0; i < mems.length; i++) {
       const member = mems[i]

@@ -45,8 +45,9 @@ bus.$on('sendHideCustomer', (data) => { socket.emit('sendHideCustomer', data) })
 
 // Facilitator
 
-bus.$on('sendLoadEditingTeams', (data) => { socket.emit('sendLoadEditingTeams', data) })
+bus.$on('sendLoadEditingGame', (data) => { socket.emit('sendLoadEditingGame', data) })
 
+bus.$on('sendDeleteTeamMember', (data) => { socket.emit('sendDeleteTeamMember', data) })
 
 // Receive
 
@@ -68,6 +69,6 @@ socket.on('hideCustomer', (data) => { bus.$emit('hideCustomer', data) })
 
 // Facilitator
 
-socket.on('updateEditingTeams', (data) => { bus.$emit('updateEditingTeams', data) })
+socket.on('loadEditingGame', (data) => { bus.$emit('loadEditingGame', data) })
 
 export default bus

@@ -284,13 +284,16 @@ module.exports = {
 
   // Facilitator
 
-  loadEditingTeams: function(db, io, data, debugOn) {
+  loadEditingGame: function(db, io, data, debugOn) {
 
-    if (debugOn) { console.log('loadEditingTeams', data) }
+    if (debugOn) { console.log('loadEditingGame', data) }
 
-    db.gameCollection.find({gameId: data.gameId}).toArray((err, res) => {
+    db.gamesCollection.findOne({id: data.gameId}, (err, game) => {
       if (err) throw err
-      io.emit('updateEditingTeams', res)
+      db.gameCollection.find({gameId: data.gameId}).toArray((err, teams) => {
+        if (err) throw err
+        io.emit('loadEditingGame', {game: game, teams: teams})
+      })
     })
   }
 

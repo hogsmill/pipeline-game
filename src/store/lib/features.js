@@ -228,7 +228,7 @@ module.exports = {
         const bugs = fs[i].bugs
         for (j = 0; j < bugs.length; j++) {
           if (!bugs[j].fixed && !bugs[j].seen) {
-            score = score + bugValues(bugs[j])
+            score = score + bugValue(bugs[j])
           }
         }
       }
