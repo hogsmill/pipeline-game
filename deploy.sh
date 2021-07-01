@@ -28,13 +28,12 @@ do
   GAMECOLLECTION=`echo $REC | cut -d, -f3`
   PORT=`echo $REC | cut -d, -f4`
   APPNAME=`echo $REC | cut -d, -f5`
-  PASSWORD=`echo $REC | cut -d, -f6`
 
   echo "------------------------------------------------"
   if [ -z "$APPNAME" ]; then
     echo "Installing $APP ($COLLECTION, $GAMECOLLECTION, $PORT)"
   else
-    echo "Installing $APP ($COLLECTION, $GAMECOLLECTION, $PORT, $APPNAME, $PASSWORD)"
+    echo "Installing $APP ($COLLECTION, $GAMECOLLECTION, $PORT, $APPNAME)"
   fi
   echo "------------------------------------------------"
 
@@ -48,9 +47,6 @@ do
   echo "VUE_APP_GAME_COLLECTION=$GAMECOLLECTION" >> $ENVFILE
   if [ ! -z "$APPNAME" ]; then
     echo "VUE_APP_NAME=$APPNAME" >> $ENVFILE
-  fi
-  if [ ! -z $PASSWORD ]; then
-    echo "VUE_APP_PASSWORD=$PASSWORD" >> $ENVFILE
   fi
 
   cd $DIR
