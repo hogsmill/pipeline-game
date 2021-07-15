@@ -17,6 +17,7 @@ done
 REPO="https://github.com/hogsmill/no-estimates.git"
 APPS=(
   'pipeline-game,pipeline,pipelineGames,3025'
+  'pipeline-game-dex,pipelineDex,pipelineDexGames,3053'
 )
 
 for ((i = 0; i < ${#APPS[@]}; i++))
