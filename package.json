@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
+    "axois": "^0.0.1-security",
     "core-js": "^3.17.2",
     "cors": "^2.8.5",
     "death": "^1.1.0",
