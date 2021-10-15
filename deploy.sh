@@ -12,7 +12,7 @@ done
 
 BASEPORT=4300
 REPO="https://github.com/hogsmill/pipeline-game.git"
-MAINAPP="pipeline"
+MAINAPP="pipeline-game"
 MAINCOLLECTION="pipeline"
 MAINGAMECOLLECTION="pipelineGames"
 MAINNAME="Pipeline Game"
