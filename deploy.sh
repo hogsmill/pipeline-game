@@ -8,14 +8,10 @@ do
   if [ "$1" == "-f" ]; then
     FORCE=true
   fi
-  if [ "$1" == "-n" ]; then
-    NEW=true
-  fi
-  shift
 done
 
 BASEPORT=4300
-REEPO="https://github.com/hogsmill/pipeline-game.git"
+REPO="https://github.com/hogsmill/pipeline-game.git"
 MAINAPP="pipeline"
 MAINCOLLECTION="pipeline"
 MAINGAMECOLLECTION="pipelineGames"
