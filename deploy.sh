@@ -15,7 +15,7 @@ do
 done
 
 BASEPORT=4300
-REEPO="https://github.com/hogsmill/no-estimates.git"
+REEPO="https://github.com/hogsmill/pipeline-game.git"
 MAINAPP="pipeline"
 MAINCOLLECTION="pipeline"
 MAINGAMECOLLECTION="pipelineGames"
