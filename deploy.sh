@@ -14,21 +14,35 @@ do
   shift
 done
 
-REPO="https://github.com/hogsmill/no-estimates.git"
-APPS=(
-  'pipeline-game,pipeline,pipelineGames,3025'
-  'pipeline-game-dex,pipelineDex,pipelineDexGames,3053'
+BASEPORT=4300
+REEPO="https://github.com/hogsmill/no-estimates.git"
+MAINAPP="pipeline"
+MAINCOLLECTION="pipeline"
+MAINGAMECOLLECTION="pipelineGames"
+MAINNAME="Pipeline Game"
+ROUTES=(
+  '',''
+  'dex','Dex'
 )
 
-for ((i = 0; i < ${#APPS[@]}; i++))
+for ((i = 0; i < ${#ROUTES[@]}; i++))
 do
-  REC="${APPS[$i]}"
+  REC="${ROUTES[$i]}"
+  ROUTE=`echo $REC | cut -d, -f1`
+  COLLECTIONSUFFIX=`echo $REC | cut -d, -f2`
 
-  APP=`echo $REC | cut -d, -f1`
-  COLLECTION=`echo $REC | cut -d, -f2`
-  GAMECOLLECTION=`echo $REC | cut -d, -f3`
-  PORT=`echo $REC | cut -d, -f4`
-  APPNAME=`echo $REC | cut -d, -f5`
+  APP=$MAINAPP
+  if [ "$ROUTE" != "" ]; then
+    APP="${APP}-${ROUTE}"
+  fi
+  COLLECTION=$MAINCOLLECTION
+  GAMECOLLECTION=$MAINGAMECOLLECTION
+  if [ "$COLLECTIONSUFFIX" != "" ]; then
+    COLLECTION="${COLLECTION}${COLLECTIONSUFFIX}"
+    GAMECOLLECTION="${GAMECOLLECTION}${COLLECTIONSUFFIX}"
+  fi
+  APPNAME=$MAINNAME
+  let PORT=$BASEPORT+$i
 
   echo "------------------------------------------------"
   if [ -z "$APPNAME" ]; then
@@ -86,7 +100,12 @@ do
       kill -9 $SERVER
     fi
   fi
-  rm -rf $DIR/node_modules/.cache
+  if [ $i == 0 ]; then
+    rm -rf $DIR/node_modules/.cache
+  else
+    rm -rf node_modules
+    ln -s ../$MAINAPP/node_modules node_modules
+  fi
   rm -rf $DIR/dist
 done
 
