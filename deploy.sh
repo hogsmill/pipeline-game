@@ -21,7 +21,7 @@ ROUTES=(
   '',''
   'dex','Dex'
   'abn', 'Abn'
-  'matt-phillip', 'Matt Phillip'
+  'mattphillip', 'MattPhillip'
 )
 
 for ((i = 0; i < ${#ROUTES[@]}; i++))
