@@ -20,8 +20,8 @@ MAINNAME="Pipeline Game"
 ROUTES=(
   '',''
   'dex','Dex'
-  'abn', 'Abn'
-  'mattphillip', 'MattPhillip'
+  'abn','Abn'
+  'mattphillip','MattPhillip'
 )
 
 for ((i = 0; i < ${#ROUTES[@]}; i++))
