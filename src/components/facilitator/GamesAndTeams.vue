@@ -112,7 +112,7 @@ export default {
     }
   },
   created() {
-    bus.$on('loadEditingGame', (data) => {
+    bus.on('loadEditingGame', (data) => {
       this.$store.dispatch('updateEditingGame', data)
     })
   },
@@ -125,7 +125,7 @@ export default {
       if (!game) {
         alert('Please enter a valid team name')
       } else {
-        bus.$emit('sendAddGame', {name: game})
+        bus.emit('sendAddGame', {name: game})
         document.getElementById('new-game').value = ''
       }
     },
@@ -134,12 +134,12 @@ export default {
       if (!checked) {
         this.$store.dispatch('updateEditingGame', '')
       } else {
-        bus.$emit('sendLoadEditingGame', {gameId: id})
+        bus.emit('sendLoadEditingGame', {gameId: id})
       }
     },
     deleteGame(game) {
       if (confirm('Delete ' + game.name + '?')) {
-        bus.$emit('sendDeleteGame', {gameId: game.id})
+        bus.emit('sendDeleteGame', {gameId: game.id})
       }
     },
     selectTeam(id) {
@@ -152,7 +152,7 @@ export default {
     },
     deleteTeamMember(member) {
       if (confirm('Delete ' + member.name + '?')) {
-        bus.$emit('sendDeleteTeamMember', {gameId: this.editingGame.id, teamId: this.editingTeam.id, id: member.id})
+        bus.emit('sendDeleteTeamMember', {gameId: this.editingGame.id, teamId: this.editingTeam.id, id: member.id})
       }
     },
   }

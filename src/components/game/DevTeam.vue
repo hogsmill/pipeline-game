@@ -117,18 +117,18 @@ export default {
       for (let i = 0; i < this.selectedFeatures.length; i++) {
         featureIds.push(this.selectedFeatures[i].id)
       }
-      bus.$emit('sendFeaturesToTest', {gameId: this.game.id, teamId: this.team.id, featureIds: featureIds})
+      bus.emit('sendFeaturesToTest', {gameId: this.game.id, teamId: this.team.id, featureIds: featureIds})
     },
     nextSprint() {
       if (this.testFeatures.length) {
         const message = 'You still have items in test. Deliver them or return them to dev to fix bugs'
-        bus.$emit('sendAlert', {gameId: this.game.id, teamId: this.team.id, severity: 'warning', message: message})
+        bus.emit('sendAlert', {gameId: this.game.id, teamId: this.team.id, severity: 'warning', message: message})
       } else if (this.team.sprint + 1 >= this.game.sprints) {
         const message = 'Game over; there are no sprints left'
-        bus.$emit('sendAlert', {gameId: this.game.id, teamId: this.team.id, severity: 'warning', message: message})
+        bus.emit('sendAlert', {gameId: this.game.id, teamId: this.team.id, severity: 'warning', message: message})
       } else {
-        bus.$emit('sendShowCustomer', {gameId: this.game.id, id: this.team.id})
-        bus.$emit('sendNextSprint', {gameId: this.game.id, teamId: this.team.id})
+        bus.emit('sendShowCustomer', {gameId: this.game.id, id: this.team.id})
+        bus.emit('sendNextSprint', {gameId: this.game.id, teamId: this.team.id})
       }
     }
   }

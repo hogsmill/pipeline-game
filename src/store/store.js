@@ -1,7 +1,4 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-
-Vue.use(Vuex)
+import { createStore } from 'vuex'
 
 const features = (state, statuses) => {
   const features = []
@@ -30,13 +27,20 @@ const complete = (feature) => {
   return complete
 }
 
-export const store = new Vuex.Store({
+export const store = createStore({
   state: {
     thisGame: 'The Pipeline Game',
     connections: 0,
     connectionError: null,
     localStorageStatus: true,
     walkThrough: false,
+    modals: {
+      feedback: false,
+      setGame: false,
+      alert: false,
+      customer: false
+    },
+    modalData: {},
     currentTab: 'game',
     host: false,
     games: [],
@@ -58,6 +62,12 @@ export const store = new Vuex.Store({
     },
     getHost: (state) => {
       return state.host
+    },
+    getModals: (state) => {
+      return state.modals
+    },
+    getModalData: (state) => {
+      return state.modalData
     },
     getCurrentTab: (state) => {
       return state.currentTab
@@ -160,6 +170,19 @@ export const store = new Vuex.Store({
     updateHost: (state, payload) => {
       state.host = payload
     },
+    showModal: (state, payload) => {
+      const modals = Object.keys(state.modals)
+      for (let i = 0; i < modals.length; i++) {
+        state.modals[modals[i]] = false
+      }
+      state.modals[payload] = true
+    },
+    hideModal: (state, payload) => {
+      state.modals[payload] = false
+    },
+    setModalData: (state, payload) => {
+      state.modalData = payload
+    },
     updateCurrentTab: (state, payload) => {
       state.currentTab = payload
     },
@@ -219,6 +242,15 @@ export const store = new Vuex.Store({
     },
     updateHost: ({ commit }, payload) => {
       commit('updateHost', payload)
+    },
+    showModal: ({ commit }, payload) => {
+      commit('showModal', payload)
+    },
+    hideModal: ({ commit }, payload) => {
+      commit('hideModal', payload)
+    },
+    setModalData: ({ commit }, payload) => {
+      commit('setModalData', payload)
     },
     updateCurrentTab: ({ commit }, payload) => {
       commit('updateCurrentTab', payload)

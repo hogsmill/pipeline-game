@@ -64,7 +64,7 @@ export default {
     }
   },
   created() {
-    bus.$on('loadEditingGame', (data) => {
+    bus.on('loadEditingGame', (data) => {
       this.$store.dispatch('updateEditingGame', data)
     })
   },
@@ -72,7 +72,7 @@ export default {
     setShowGameDisplay(val) {
       this.showGameDisplay = val
       if (this.game.id) {
-        bus.$emit('sendGetTeams', {gameId: this.game.id})
+        bus.emit('sendGetTeams', {gameId: this.game.id})
       }
     }
   }

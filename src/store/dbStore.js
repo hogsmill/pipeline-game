@@ -151,6 +151,16 @@ module.exports = {
     })
   },
 
+  getGames: function(db, io, debugOn) {
+
+    if (debugOn) { console.log('getGames') }
+
+    db.gamesCollection.find().toArray((err, res) => {
+      if (err) throw err
+      io.emit('updateGames', res)
+    })
+  },
+
   getTeams: function(db, io, data, debugOn) {
 
     if (debugOn) { console.log('getTeams', data) }

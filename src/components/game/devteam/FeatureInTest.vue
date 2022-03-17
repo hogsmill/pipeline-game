@@ -51,10 +51,10 @@
        return bugs
      },
      fixBugsInFeature(feature) {
-       bus.$emit('sendFixBugsInFeature', {gameId: this.game.id, teamId: this.team.id, featureId: feature.id})
+       bus.emit('sendFixBugsInFeature', {gameId: this.game.id, teamId: this.team.id, featureId: feature.id})
      },
      deliverFeature(feature) {
-       bus.$emit('sendDeliverFeature', {gameId: this.game.id, teamId: this.team.id, featureId: feature.id})
+       bus.emit('sendDeliverFeature', {gameId: this.game.id, teamId: this.team.id, featureId: feature.id})
      }
    }
 }
@@ -62,6 +62,7 @@
 
 <style lang="scss">
   .test-feature {
+    position: relative;
 
     p {
       margin: 0;
@@ -72,6 +73,8 @@
     }
 
     .buttons {
+      position: absolute;
+      bottom: 0;
       margin-top: 4px;
       padding: 0;
 

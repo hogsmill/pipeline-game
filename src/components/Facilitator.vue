@@ -34,9 +34,9 @@ export default {
     }
   },
   created() {
-    bus.$emit('sendGetGames')
+    bus.emit('sendGetGames')
 
-    bus.$on('setEditingGame', (data) => {
+    bus.on('setEditingGame', (data) => {
       this.$store.dispatch('setEditingGame', data)
     })
   }

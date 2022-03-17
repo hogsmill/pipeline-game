@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <SetGame />
+    <WalkThrough />
     <i v-if="isHost && gameId" title="Restart Game" class="fas fa-undo-alt restart" aria-hidden="true" @click="restart()" />
     <h2>
       <span v-if="game.id">Game: {{ game.name }} - </span>
@@ -21,12 +22,14 @@
 import bus from '../socket.js'
 
 import SetGame from './SetGame.vue'
+import WalkThrough from './WalkThrough.vue'
 import DevTeam from './game/DevTeam.vue'
 import Customer from './game/Customer.vue'
 
 export default {
   components: {
     SetGame,
+    WalkThrough,
     DevTeam,
     Customer
   },
@@ -53,7 +56,7 @@ export default {
   methods: {
     restart() {
       if (confirm('Are you sure you want to re-start this game?')) {
-        bus.$emit('sendRestartGame', {gameId: this.gameId})
+        bus.emit('sendRestartGame', {gameId: this.gameId})
       }
     }
   }

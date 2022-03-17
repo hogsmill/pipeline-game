@@ -79,7 +79,7 @@ export default {
     toggleSelectFeature() {
       if (!this.team.inTest) {
         const selected = !this.featureSelected(this.myName)
-        bus.$emit('sendSelectFeatureToDevelop', {gameId: this.game.id, teamId: this.team.id, featureId: this.feature.id, member: this.myName, selected: selected})
+        bus.emit('sendSelectFeatureToDevelop', {gameId: this.game.id, teamId: this.team.id, featureId: this.feature.id, member: this.myName, selected: selected})
       }
     }
   }
